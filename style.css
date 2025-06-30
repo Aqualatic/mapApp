@@ -1,0 +1,57 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+/* map takes full viewport */
+#map {
+  height: 100vh;
+}
+
+/* floating toolbar */
+#toolbar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* add-marker pop-up form */
+#formContainer {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: none;
+  gap: 6px;
+}
+
+#formContainer input {
+  padding: 4px 6px;
+  font-size: 14px;
+  width: 140px;
+}
+#formContainer button {
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* keep geocoder below toolbar */
+.leaflet-control-geocoder {
+  margin-top: 50px;
+}

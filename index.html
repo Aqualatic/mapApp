@@ -1,103 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>Leaflet Map App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-  <style>
-    html, body { margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
-    #map { height: 100vh; }
-    #formContainer {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: white;
-      padding: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-      border-radius: 5px;
-      z-index: 1000;
-      display: none;
-    }
-    #formContainer input {
-      padding: 5px;
-      font-size: 14px;
-    }
-    #formContainer button {
-      padding: 5px 10px;
-      margin-left: 5px;
-    }
-  </style>
+
+  <!-- Leaflet core -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Geocoder plug-in -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"
+  />
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+  <!-- App-specific styles -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
+  <!-- Top toolbar -->
+  <div id="toolbar">
+    <select id="categorySelect">
+      <option value="default">default</option>
+    </select>
+
+    <div id="listToggles"></div>
+
+    <button id="drawRouteBtn">Draw Route</button>
+  </div>
+
+  <!-- Leaflet map container -->
   <div id="map"></div>
 
-  <!-- The form for adding name -->
+  <!-- “Add location” mini-form -->
   <div id="formContainer">
-    <input type="text" id="locationName" placeholder="Enter location name" />
-    <button id="addMarkerBtn">Add Marker</button>
+    <input
+      type="text"
+      id="locationName"
+      placeholder="Enter location name"
+      autocomplete="off"
+    />
+    <input
+      type="text"
+      id="locationList"
+      placeholder="list (e.g. coffee)"
+      autocomplete="off"
+    />
+    <button id="addMarkerBtn">Add</button>
     <button id="cancelBtn">Cancel</button>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
-  <script>
-    const map = L.map('map').setView([37.7749, -122.4194], 13);
-    const markers = [];
-    let tempLatLng = null;
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Add geocoder search box
-    L.Control.geocoder({
-      defaultMarkGeocode: false
-    }).on('markgeocode', function(e) {
-      const latlng = e.geocode.center;
-      const name = e.geocode.name;
-      const marker = L.marker(latlng).addTo(map);
-      marker.bindPopup(`<b>${name}</b><br><button onclick="deleteMarker(${markers.length})">Delete Marker</button>`).openPopup();
-      markers.push(marker);
-      map.setView(latlng, 15);
-    }).addTo(map);
-
-    // Handle map click
-    map.on('click', function(e) {
-      tempLatLng = e.latlng;
-      document.getElementById('formContainer').style.display = 'block';
-      document.getElementById('locationName').focus();
-    });
-
-    // Add marker button
-    document.getElementById('addMarkerBtn').onclick = function() {
-      const name = document.getElementById('locationName').value.trim();
-      if (name && tempLatLng) {
-        const marker = L.marker(tempLatLng).addTo(map);
-        marker.bindPopup(`<b>${name}</b><br><button onclick="deleteMarker(${markers.length})">Delete Marker</button>`).openPopup();
-        markers.push(marker);
-        document.getElementById('locationName').value = '';
-        document.getElementById('formContainer').style.display = 'none';
-      }
-    };
-
-    // Cancel button
-    document.getElementById('cancelBtn').onclick = function() {
-      document.getElementById('locationName').value = '';
-      document.getElementById('formContainer').style.display = 'none';
-    };
-
-    // Delete marker function
-    function deleteMarker(index) {
-      if (markers[index]) {
-        map.removeLayer(markers[index]);
-        markers[index] = null;
-      }
-    }
-  </script>
+  <!-- App logic -->
+  <script src="app.js"></script>
 </body>
 </html>
