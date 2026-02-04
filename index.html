@@ -3,62 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MapApp</title> <!-- Title of the web application -->
+  <title>Location Mapper</title>
   
-  <!-- Load external Leaflet map library CSS from CDN -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
         crossorigin=""/>
   
-  <!-- Load Leaflet routing machine CSS for drawing routes on the map -->
+  <!-- Leaflet Routing Machine CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
   
-  <!-- Load geocoder CSS for address search functionality -->
+  <!-- Geocoder CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css" />
   
-  <!-- Load our custom CSS file for styling the panels and buttons -->
+  <!-- Custom styles -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Main container where the interactive map will be displayed -->
+  <!-- Map Container -->
   <div id="map"></div>
 
-  <!-- Panel on the left side that shows all marker categories -->
-  <!-- Users can check/uncheck categories to show/hide groups of markers -->
+  <!-- Categories Panel -->
   <div class="list-panel" id="listToggles">
     <h3>Categories</h3>
     <div class="empty-state">No markers yet. Click on the map to add locations!</div>
   </div>
 
-  <!-- Panel at the bottom left with control buttons -->
+  <!-- Controls Panel -->
   <div class="control-panel">
     <h3>Controls</h3>
-    
-    <!-- Button to calculate and draw a route through all visible markers -->
     <button class="btn btn-primary" id="drawRouteBtn">Draw Route</button>
-    
-    <!-- Button to remove the drawn route from the map -->
-    <!-- Starts disabled and becomes clickable after a route is drawn -->
     <button class="btn btn-danger" id="clearRouteBtn" disabled>Clear Route</button>
-    
-    <!-- Button to show or hide the user's current location marker -->
     <button class="btn btn-secondary" id="toggleLocationBtn">Toggle My Location</button>
   </div>
 
-  <!-- Load Leaflet JavaScript library -->
-  <!-- Must be loaded before routing and geocoder scripts -->
+  <!-- Modal (injected by JavaScript) -->
+
+  <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin=""></script>
-  
-  <!-- Load routing machine library for calculating routes between points -->
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-  
-  <!-- Load geocoder library for searching addresses and places -->
   <script src="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
-  
-  <!-- Load our custom JavaScript file -->
-  <!-- Must be loaded after all library scripts -->
   <script src="app.js"></script>
 </body>
 </html>

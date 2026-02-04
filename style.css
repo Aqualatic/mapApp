@@ -1,37 +1,48 @@
-/*  Set html and body to fill entire browser window */
+/* ===== GLOBAL STYLES ===== */
+
 html, body { 
   height: 100%; 
   margin: 0; 
-  font-family: system-ui, sans-serif; 
+  font-family: system-ui, -apple-system, sans-serif; 
 }
 
-/* Make the map container fill the entire viewport height */
 #map { 
   height: 100vh; 
 }
 
-/* Panel that displays marker categories on the left side */  
-.list-panel {
+/* ===== PANELS ===== */
+
+.list-panel,
+.control-panel {
   position: absolute;
   left: 10px;
-  top: 10px;
   width: 240px;
-  max-height: 50vh;
   background: #fff;
   padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   z-index: 1000;
+}
+
+.list-panel {
+  top: 10px;
+  max-height: 35vh;
   overflow-y: auto;
 }
 
-.list-panel h3 {
+.control-panel {
+  bottom: 40px;
+}
+
+.list-panel h3,
+.control-panel h3 {
   margin: 0 0 12px;
   font-size: 18px;
   color: #333;
 }
 
-/* Container for each category item with checkbox and label */
+/* ===== CATEGORY LIST ITEMS ===== */
+
 .list-item {
   display: flex;
   align-items: center;
@@ -43,7 +54,6 @@ html, body {
   transition: background 0.2s;
 }
 
-/* Change background color when hovering over a list item */
 .list-item:hover {
   background: #e9ecef;
 }
@@ -62,7 +72,6 @@ html, body {
   user-select: none;
 }
 
-/* Message displayed when no markers exist yet */
 .empty-state {
   color: #6c757d;
   font-size: 14px;
@@ -71,26 +80,8 @@ html, body {
   text-align: center;
 }
 
-/* Panel that contains control buttons at bottom left */
-.control-panel {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  width: 240px;
-  background: #fff;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
-  z-index: 1000;
-}
+/* ===== BUTTONS ===== */
 
-.control-panel h3 {
-  margin: 0 0 12px;
-  font-size: 18px;
-  color: #333;
-}
-
-/* Base styling for all buttons */
 .btn {
   width: 100%;
   padding: 10px 16px;
@@ -104,7 +95,14 @@ html, body {
   text-align: left;
 }
 
-/* Blue button for primary actions like draw route */
+.btn:last-child {
+  margin-bottom: 0;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 .btn-primary {
   background: #007bff;
   color: white;
@@ -113,10 +111,9 @@ html, body {
 .btn-primary:hover {
   background: #0056b3;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 123, 255, .3);
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
 }
 
-/* Gray button for secondary actions like toggle location */
 .btn-secondary {
   background: #6c757d;
   color: white;
@@ -125,69 +122,43 @@ html, body {
 .btn-secondary:hover {
   background: #545b62;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(108, 117, 125, .3);
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
 }
 
-/* Red button for destructive actions like clear route */
 .btn-danger {
   background: #dc3545;
   color: white;
 }
 
-/* Only apply hover effect when button is not disabled */
 .btn-danger:hover:not(:disabled) {
   background: #c82333;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(220, 53, 69, .3);
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
 }
 
-/* Styling for disabled clear route button */
 .btn-danger:disabled {
   background: #e9ecef;
   color: #6c757d;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
-/* Reset button position when clicked */
-.btn:active:not(:disabled) {
-  transform: translateY(0);
-}
+/* ===== MODAL ===== */
 
-/* Remove bottom margin from last button */
-.btn:last-child {
-  margin-bottom: 0;
-}
-
-/* Position the geocoder search box below the category panel */
-.leaflet-control-geocoder {
-  margin-top: 10px;
-}
-
-/* ===== CUSTOM MODAL STYLES ===== */
-
-/* Modal overlay that covers the entire screen with semi-transparent background */
 .custom-modal {
   display: none;
   position: fixed;
   z-index: 10000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   animation: fadeIn 0.2s;
 }
 
-/* Show modal when active class is added */
 .custom-modal.active {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* White box that contains the modal content */
 .modal-content {
   background-color: white;
   padding: 30px;
@@ -198,16 +169,13 @@ html, body {
   animation: slideIn 0.3s;
 }
 
-/* Modal title styling */
 .modal-content h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
+  margin: 0 0 20px;
   color: #333;
   font-size: 20px;
   font-weight: 600;
 }
 
-/* Text input field in modal */
 .modal-content input {
   width: 100%;
   padding: 10px;
@@ -216,23 +184,20 @@ html, body {
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+  font-family: inherit;
 }
 
-/* Highlight input border when focused */
 .modal-content input:focus {
   outline: none;
-  border-color: #0073ff;
+  border-color: #007bff;
 }
 
-/* Container for modal buttons */
 .modal-buttons {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
 }
 
-/* Buttons inside modal */
 .modal-buttons button {
   padding: 10px 20px;
   border: none;
@@ -243,10 +208,10 @@ html, body {
   transition: background-color 0.2s;
 }
 
-/* Green OK/primary button in modal */
 .modal-buttons .btn-primary {
-  background-color: #0073ff;
+  background-color: #007bff;
   color: white;
+  width: auto;
 }
 
 .modal-buttons .btn-primary:hover {
@@ -255,10 +220,10 @@ html, body {
   box-shadow: none;
 }
 
-/* Gray Cancel/secondary button in modal */
 .modal-buttons .btn-secondary {
   background-color: #f1f1f1;
   color: #333;
+  width: auto;
 }
 
 .modal-buttons .btn-secondary:hover {
@@ -267,13 +232,199 @@ html, body {
   box-shadow: none;
 }
 
-/* Animation for modal background fade in */
+/* ===== ROUTING PANEL ===== */
+
+.leaflet-routing-container-custom {
+  position: absolute;
+  right: 10px;
+  top: 120px;
+  left: auto;
+  bottom: auto;
+  width: 340px;
+  max-height: calc(100vh - 160px);
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  font-family: inherit;
+  z-index: 999;
+  transition: transform 0.3s ease;
+}
+
+.leaflet-routing-container-custom.collapsed {
+  transform: translateX(calc(100% + 50px));
+}
+
+.route-panel-toggle {
+  position: absolute;
+  left: -40px;
+  top: 10px;
+  width: 40px;
+  height: 60px;
+  background: #fff;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  font-size: 18px;
+  color: #495057;
+  transition: background 0.2s;
+  z-index: 1;
+}
+
+.route-panel-toggle:hover {
+  background: #f8f9fa;
+}
+
+.transport-mode-toggle {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px;
+}
+
+.transport-mode-toggle .mode-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #dadce0;
+  background: #fff;
+  color: #5f6368;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.transport-mode-toggle .mode-btn:first-child {
+  border-radius: 4px 0 0 4px;
+  border-right: none;
+}
+
+.transport-mode-toggle .mode-btn:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.transport-mode-toggle .mode-btn:hover {
+  background: #f8f9fa;
+}
+
+.transport-mode-toggle .mode-btn.active {
+  background: #e8f0fe;
+  color: #1967d2;
+  border-color: #1967d2;
+}
+
+.leaflet-routing-container-custom h2,
+.leaflet-routing-container-custom h3 {
+  margin: 0;
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #5f6368;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.leaflet-routing-container-custom h3 {
+  font-size: 15px;
+  font-weight: 400;
+  color: #202124;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 12px 16px;
+  border-bottom: none;
+}
+
+.leaflet-routing-container-custom table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaflet-routing-container-custom tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.leaflet-routing-container-custom tr:hover {
+  background: #f8f9fa;
+}
+
+.leaflet-routing-container-custom td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #3c4043;
+  line-height: 1.6;
+}
+
+.leaflet-routing-container-custom .leaflet-routing-alt {
+  padding: 16px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 13px;
+  color: #5f6368;
+}
+
+.leaflet-routing-container-custom .leaflet-routing-alt h3 {
+  padding: 0;
+  margin-bottom: 4px;
+  border: none;
+  background: transparent;
+  color: #202124;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.leaflet-routing-alternatives-container {
+  max-height: calc(100vh - 320px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.leaflet-routing-alternatives-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.leaflet-routing-alternatives-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.leaflet-routing-alternatives-container::-webkit-scrollbar-thumb {
+  background: #dadce0;
+  border-radius: 4px;
+}
+
+.leaflet-routing-alternatives-container::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6;
+}
+
+.leaflet-routing-container-custom .leaflet-routing-collapse-btn {
+  display: none;
+}
+
+.leaflet-routing-container-custom .leaflet-routing-instruction {
+  font-weight: 400;
+  color: #202124;
+}
+
+.leaflet-routing-container-custom .leaflet-routing-distance {
+  color: #5f6368;
+  font-size: 12px;
+  display: block;
+  margin-top: 2px;
+}
+
+/* ===== ANIMATIONS ===== */
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-/* Animation for modal content sliding in from top */
 @keyframes slideIn {
   from { 
     transform: translateY(-50px);
@@ -285,27 +436,65 @@ html, body {
   }
 }
 
-/* Adjust panel widths and positions on smaller screens */
+/* ===== RESPONSIVE DESIGN ===== */
+
 @media (max-width: 768px) {
   .list-panel,
   .control-panel {
-    width: calc(100% - 20px);
+    width: calc(100vw - 20px);
     left: 10px;
     right: 10px;
   }
-  
+
   .list-panel {
-    max-height: 30vh;
+    max-height: 25vh;
   }
   
   .control-panel {
-    bottom: 10px;
+    bottom: 50px;
   }
 
-  /* Make modal responsive on mobile */
   .modal-content {
     min-width: 280px;
     max-width: calc(100% - 40px);
     padding: 20px;
   }
+
+  .leaflet-routing-container-custom {
+    left: 10px;
+    right: 10px;
+    width: calc(100vw - 20px);
+    max-height: 45vh;
+    top: auto;
+    bottom: 50px;
+  }
+  
+  .leaflet-routing-container-custom.collapsed {
+    transform: translateY(calc(100% + 60px));
+  }
+  
+  .route-panel-toggle {
+    left: 50%;
+    transform: translateX(-50%);
+    top: -40px;
+    width: 60px;
+    height: 40px;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .leaflet-routing-alternatives-container {
+    max-height: calc(45vh - 200px);
+  }
+  
+  .transport-mode-toggle .mode-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+/* ===== GEOCODER POSITION ===== */
+
+.leaflet-control-geocoder {
+  margin-top: 10px;
 }
