@@ -165,6 +165,126 @@ html, body {
   margin-top: 10px;
 }
 
+/* ===== CUSTOM MODAL STYLES ===== */
+
+/* Modal overlay that covers the entire screen with semi-transparent background */
+.custom-modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s;
+}
+
+/* Show modal when active class is added */
+.custom-modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* White box that contains the modal content */
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  min-width: 300px;
+  max-width: 500px;
+  animation: slideIn 0.3s;
+}
+
+/* Modal title styling */
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Text input field in modal */
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+/* Highlight input border when focused */
+.modal-content input:focus {
+  outline: none;
+  border-color: #0073ff;
+}
+
+/* Container for modal buttons */
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* Buttons inside modal */
+.modal-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+/* Green OK/primary button in modal */
+.modal-buttons .btn-primary {
+  background-color: #0073ff;
+  color: white;
+}
+
+.modal-buttons .btn-primary:hover {
+  background-color: #0056b3;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Gray Cancel/secondary button in modal */
+.modal-buttons .btn-secondary {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.modal-buttons .btn-secondary:hover {
+  background-color: #ddd;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Animation for modal background fade in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Animation for modal content sliding in from top */
+@keyframes slideIn {
+  from { 
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* Adjust panel widths and positions on smaller screens */
 @media (max-width: 768px) {
   .list-panel,
@@ -180,5 +300,12 @@ html, body {
   
   .control-panel {
     bottom: 10px;
+  }
+
+  /* Make modal responsive on mobile */
+  .modal-content {
+    min-width: 280px;
+    max-width: calc(100% - 40px);
+    padding: 20px;
   }
 }
