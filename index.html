@@ -13,8 +13,6 @@
   <!-- Leaflet Routing Machine CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
   
-  <!-- Geocoder CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css" />
   
   <!-- Custom styles -->
   <link rel="stylesheet" href="style.css">
@@ -23,28 +21,94 @@
   <!-- Map Container -->
   <div id="map"></div>
 
-  <!-- Categories Panel -->
-  <div class="list-panel" id="listToggles">
-    <h3>Categories</h3>
-    <div class="empty-state">No markers yet. Click on the map to add locations!</div>
+<!-- Google Maps-Style Left Panel -->
+  <div class="left-panel">
+    <!-- Categories Section -->
+    <div class="categories-section">
+      <h3>Categories</h3>
+      <div id="listToggles">
+        <div class="empty-state">No markers yet. Click on the map to add locations!</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Controls Panel -->
-  <div class="control-panel">
-    <h3>Controls</h3>
-    <button class="btn btn-primary" id="drawRouteBtn">Draw Route</button>
-    <button class="btn btn-danger" id="clearRouteBtn" disabled>Clear Route</button>
-    <button class="btn btn-secondary" id="toggleLocationBtn">Toggle My Location</button>
+<!-- Google Maps-Style Right Panel -->
+  <div class="right-panel">
+    <!-- Transport Mode Section -->
+    <div class="transport-section">
+      <h3>Transport Mode</h3>
+      <div class="transport-buttons">
+        <button class="transport-btn driving active" data-mode="driving">
+          <span class="btn-icon">🚗</span>
+          <span class="btn-label">Driving</span>
+        </button>
+        <button class="transport-btn walking" data-mode="walking">
+          <span class="btn-icon">🚶</span>
+          <span class="btn-label">Walking</span>
+        </button>
+        <button class="transport-btn cycling" data-mode="cycling">
+          <span class="btn-icon">🚴</span>
+          <span class="btn-label">Cycling</span>
+        </button>
+      </div>
+      
+      <!-- Turn-by-Turn Directions Section -->
+      <div class="directions-section" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e0e0e0;">
+        <div class="directions-header-inline">
+          <h4>📍 Show Turn-by-Turn Directions</h4>
+        </div>
+        <div class="directions-list-inline" style="display: none; margin-top: 8px;">
+          <!-- Directions will be inserted here -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Route Info Section -->
+    <div class="route-info-panel">
+      <h3>Route Information</h3>
+      <div id="routeInfo">
+        <p style="color: #666; font-size: 14px; margin: 0;">No route created yet</p>
+      </div>
+    </div>
+  </div>
+
+<!-- Bottom Controls -->
+  <div class="bottom-controls">
+    <button class="gm-button primary" id="drawRouteBtn">
+      <span>🛣️</span>
+      <span>Draw Route</span>
+    </button>
+    <button class="gm-button danger" id="clearRouteBtn">
+      <span>🗑️</span>
+      <span>Clear Route</span>
+    </button>
+    <button class="gm-button secondary" id="toggleLocationBtn">
+      <span>📍</span>
+      <span>Toggle Location</span>
+    </button>
+  </div>
+
+  <!-- Map Controls - Bottom Left -->
+  <div class="map-controls-bottom-left">
+    <!-- Zoom controls will be positioned here by Leaflet -->
+  </div>
+
+  <!-- Map Controls - Bottom Right -->
+  <div class="map-controls-bottom-right">
+    <!-- Layer controls will be positioned here by Leaflet -->
   </div>
 
   <!-- Modal (injected by JavaScript) -->
 
+  <!-- Configuration and Routing Service -->
+  <script src="config.js"></script>
+  <script src="routing-service.js"></script>
+  
   <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin=""></script>
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-  <script src="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
