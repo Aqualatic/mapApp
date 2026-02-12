@@ -1149,7 +1149,7 @@ html, body {
   font-weight: 700;
   color: var(--direction-text);
   text-align: center;
-  min-height: 65px;
+  min-height: 56px;
   position: relative;
   overflow: hidden;
 }
@@ -1778,7 +1778,7 @@ html, body {
 .map-styles-dropdown {
   position: absolute;
   bottom: 20px;
-  left:
+  left: 20px;
   z-index: 1000;
 }
 
