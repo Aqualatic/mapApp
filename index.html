@@ -72,21 +72,63 @@
     </div>
   </div>
 
-<!-- Bottom Controls -->
-  <div class="bottom-controls">
-    <button class="gm-button primary" id="drawRouteBtn">
-      <span>🛣️</span>
-      <span>Draw Route</span>
-    </button>
-    <button class="gm-button danger" id="clearRouteBtn">
-      <span>🗑️</span>
-      <span>Clear Route</span>
-    </button>
-    <button class="gm-button secondary" id="toggleLocationBtn">
-      <span>📍</span>
-      <span>Toggle Location</span>
-    </button>
-  </div>
+      <!-- Map Styles Dropdown -->
+      <div class="map-styles-dropdown">
+        <button class="map-styles-toggle" id="mapTypesToggle" aria-expanded="false" aria-haspopup="listbox">
+          <span class="current-map-type">Default</span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="map-styles-menu" id="mapTypesDropdown" role="listbox" aria-label="Map Styles">
+          <div class="map-type-option" data-style="Default" role="option" aria-selected="true">
+            <span class="option-icon">🗺️</span>
+            <span class="option-label">Default</span>
+          </div>
+          <div class="map-type-option" data-style="Faded" role="option" aria-selected="false">
+            <span class="option-icon">🌤️</span>
+            <span class="option-label">Faded</span>
+          </div>
+          <div class="map-type-option" data-style="Cool" role="option" aria-selected="false">
+            <span class="option-icon">🌲</span>
+            <span class="option-label">Cool</span>
+          </div>
+          <div class="map-type-option" data-style="Dark 2D" role="option" aria-selected="false">
+            <span class="option-icon">🌑</span>
+            <span class="option-label">Dark 2D</span>
+          </div>
+          <div class="map-type-option" data-style="Light 2D" role="option" aria-selected="false">
+            <span class="option-icon">☀️</span>
+            <span class="option-label">Light 2D</span>
+          </div>
+          <div class="map-type-option" data-style="Satellite" role="option" aria-selected="false">
+            <span class="option-icon">🛰️</span>
+            <span class="option-label">Satellite</span>
+          </div>
+          <div class="map-type-option" data-style="Outdoors" role="option" aria-selected="false">
+            <span class="option-icon">🏔️</span>
+            <span class="option-label">Outdoors</span>
+          </div>
+          <div class="map-type-option" data-style="Warm" role="option" aria-selected="false">
+            <span class="option-icon">🔥</span>
+            <span class="option-label">Warm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Center Buttons Container -->
+      <div class="bottom-buttons-container">
+        <button class="gm-button primary" id="drawRouteBtn">
+          <span>🗺️</span>
+          <span>Draw Route</span>
+        </button>
+        <button class="gm-button secondary" id="clearRouteBtn">
+          <span>🗑️</span>
+          <span>Clear Route</span>
+        </button>
+        <button class="gm-button secondary" id="toggleLocationBtn">
+          <span>📍</span>
+          <span>Toggle Location</span>
+        </button>
+      </div>
 
   <!-- Map Controls - Bottom Left -->
   <div class="map-controls-bottom-left">

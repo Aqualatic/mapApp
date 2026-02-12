@@ -184,7 +184,6 @@ class RoutingService {
             <span class="step-distance">${this.formatDistance(step.distance)}</span>
             <span class="step-time">• ${this.formatTime(step.duration)}</span>
           </div>
-        </div>
       </div>
     `).join('');
   }
@@ -300,6 +299,15 @@ class RoutingService {
     const existing = document.querySelector('.enhanced-route-panel');
     if (existing) existing.remove();
     return;
+  }
+
+  /**
+   * Update route color when theme changes
+   */
+  updateRouteColor(color) {
+    if (this.currentRouteLine) {
+      this.currentRouteLine.setStyle({ color: color });
+    }
   }
 
   /**

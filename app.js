@@ -4,6 +4,279 @@ const DEFAULT_ZOOM = 13;
 const NEAR_RADIUS = 100; // meters
 const MAX_WAYPOINTS = 10;
 
+// ===== DARK MODE ONLY =====
+// Theme switching has been removed. Only dark mode is now supported.
+
+function applyDarkTheme() {
+  const root = document.documentElement;
+  
+  // Apply dark theme by setting data attribute
+  root.setAttribute('data-theme', 'dark');
+  
+  // Update all UI elements to use dark theme colors
+  updateAllUIElements('dark');
+  
+  // Update marker colors
+  updateMarkerColors('dark');
+  
+  // Update route colors if route exists
+  if (state.currentRoute) {
+    updateRouteColors('dark');
+  }
+  
+  // Update layer control styling
+  updateLayerControlStyling('dark');
+}
+
+function updateAllUIElements() {
+  // Update all panels and containers
+  const panels = document.querySelectorAll('.left-panel, .right-panel, .bottom-controls, .map-controls-bottom-left, .map-controls-bottom-right');
+  panels.forEach(panel => {
+    if (panel) {
+      panel.style.background = '#2d2d2d';
+      panel.style.borderColor = '#404040';
+      panel.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.4)';
+    }
+  });
+  
+  // Update all buttons
+  const buttons = document.querySelectorAll('.gm-button, .transport-btn, .btn');
+  buttons.forEach(btn => {
+    if (btn) {
+      btn.style.background = '#2d2d2d';
+      btn.style.borderColor = '#404040';
+      btn.style.color = '#cccccc';
+    }
+  });
+  
+  // Update active transport buttons
+  const activeButtons = document.querySelectorAll('.transport-btn.active');
+  activeButtons.forEach(btn => {
+    if (btn) {
+      if (btn.classList.contains('driving')) {
+        btn.style.background = '#1a3d5e';
+        btn.style.borderColor = '#2a5d8f';
+        btn.style.color = '#9ec6ff';
+      } else if (btn.classList.contains('walking')) {
+        btn.style.background = '#2a5d40';
+        btn.style.borderColor = '#3a8f60';
+        btn.style.color = '#a8ffcc';
+      } else if (btn.classList.contains('cycling')) {
+        btn.style.background = '#5d4000';
+        btn.style.borderColor = '#8f6000';
+        btn.style.color = '#ffd66b';
+      }
+    }
+  });
+  
+  // Update headings and labels
+  const headings = document.querySelectorAll('h3, h4, .transport-header');
+  headings.forEach(heading => {
+    if (heading) {
+      heading.style.color = '#ffffff';
+    }
+  });
+  
+  // Update text content
+  const textElements = document.querySelectorAll('label, .empty-state, .no-directions, .note, .step-instruction, .step-details, .summary-label, .summary-value');
+  textElements.forEach(el => {
+    if (el) {
+      el.style.color = '#ffffff';
+    }
+  });
+  
+  // Update list items
+  const listItems = document.querySelectorAll('.list-item');
+  listItems.forEach(item => {
+    if (item) {
+      item.style.background = '#3d3d3d';
+      item.style.borderColor = '#505050';
+    }
+  });
+  
+  // Update route info panel
+  const routeInfoPanel = document.querySelector('.route-info-panel');
+  if (routeInfoPanel) {
+    routeInfoPanel.style.background = '#2d2d2d';
+    routeInfoPanel.style.borderColor = '#404040';
+  }
+  
+  // Update directions section
+  const directionsSection = document.querySelector('.directions-section');
+  if (directionsSection) {
+    directionsSection.style.background = '#2d2d2d';
+    directionsSection.style.borderColor = '#404040';
+    
+    // Also update the directions header
+    const directionsHeader = directionsSection.querySelector('.directions-header-inline');
+    if (directionsHeader) {
+      directionsHeader.style.background = '#3d3d3d';
+      directionsHeader.style.borderColor = '#505050';
+      
+      const headerText = directionsHeader.querySelector('h4');
+      if (headerText) {
+        headerText.style.color = '#ffffff';
+      }
+    }
+  }
+  
+  // Update direction steps
+  const directionSteps = document.querySelectorAll('.direction-step');
+  directionSteps.forEach(step => {
+    if (step) {
+      step.style.background = '#3d3d3d';
+      step.style.borderColor = '#505050';
+      
+      // Update step number background
+      const stepNumber = step.querySelector('.step-number');
+      if (stepNumber) {
+        stepNumber.style.background = '#4da6ff';
+        stepNumber.style.color = '#ffffff';
+      }
+      
+      // Update step content text
+      const stepContent = step.querySelector('.step-content');
+      if (stepContent) {
+        const stepInstruction = stepContent.querySelector('.step-instruction');
+        if (stepInstruction) {
+          stepInstruction.style.color = '#ffffff';
+        }
+        
+        const stepDetails = stepContent.querySelector('.step-details');
+        if (stepDetails) {
+          stepDetails.style.color = '#cccccc';
+          
+          const stepDistance = stepDetails.querySelector('.step-distance');
+          if (stepDistance) {
+            stepDistance.style.color = '#4da6ff';
+          }
+        }
+        
+        // Update marker proximity styling
+        const markerProximity = stepContent.querySelector('.marker-proximity');
+        if (markerProximity) {
+          markerProximity.style.background = '#1a3d5e';
+          markerProximity.style.color = '#9ec6ff';
+          markerProximity.style.borderColor = '#2a5d8f';
+        }
+      }
+    }
+  });
+  
+  // Update summary items
+  const summaryItems = document.querySelectorAll('.summary-item');
+  summaryItems.forEach(item => {
+    if (item) {
+      item.style.background = '#3d3d3d';
+      item.style.borderColor = '#505050';
+    }
+  });
+  
+  // Update modal styles
+  const modalContent = document.querySelector('.modal-content');
+  if (modalContent) {
+    modalContent.style.background = '#2d2d2d';
+    modalContent.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.6)';
+  }
+  
+  const modalInput = document.querySelector('.modal-content input');
+  if (modalInput) {
+    modalInput.style.background = '#3d3d3d';
+    modalInput.style.borderColor = '#505050';
+    modalInput.style.color = '#ffffff';
+  }
+  
+  // Update layer control if it exists
+  updateLayerControlStyling('dark');
+  
+  // Update any other elements that might have inline styles
+  const inlineStyledElements = document.querySelectorAll('[style*="background"], [style*="color"], [style*="border"]');
+  inlineStyledElements.forEach(el => {
+    // Only update elements that are part of our UI, not map elements
+    if (!el.closest('.leaflet') && !el.closest('.leaflet-marker-icon')) {
+      const currentStyle = el.getAttribute('style');
+      if (currentStyle) {
+        let newStyle = currentStyle;
+        
+        // Update background colors
+        if (newStyle.includes('background: #f8f9fa')) {
+          newStyle = newStyle.replace('background: #f8f9fa', 'background: #3d3d3d');
+        } else if (newStyle.includes('background: #e9ecef')) {
+          newStyle = newStyle.replace('background: #e9ecef', 'background: #505050');
+        } else if (newStyle.includes('background: #e3f2fd')) {
+          newStyle = newStyle.replace('background: #e3f2fd', 'background: #1a3d5e');
+        } else if (newStyle.includes('background: #e8f5e9')) {
+          newStyle = newStyle.replace('background: #e8f5e9', 'background: #2a5d40');
+        } else if (newStyle.includes('background: #fff3e0')) {
+          newStyle = newStyle.replace('background: #fff3e0', 'background: #5d4000');
+        }
+        
+        // Update text colors
+        if (newStyle.includes('color: #333')) {
+          newStyle = newStyle.replace('color: #333', 'color: #cccccc');
+        } else if (newStyle.includes('color: #666')) {
+          newStyle = newStyle.replace('color: #666', 'color: #999999');
+        } else if (newStyle.includes('color: #888')) {
+          newStyle = newStyle.replace('color: #888', 'color: #999999');
+        }
+        
+        // Update border colors
+        if (newStyle.includes('border: 1px solid #e0e0e0')) {
+          newStyle = newStyle.replace('border: 1px solid #e0e0e0', 'border: 1px solid #404040');
+        } else if (newStyle.includes('border: 1px solid #c6c6c6')) {
+          newStyle = newStyle.replace('border: 1px solid #c6c6c6', 'border: 1px solid #505050');
+        }
+        
+        if (newStyle !== currentStyle) {
+          el.setAttribute('style', newStyle);
+        }
+      }
+    }
+  });
+}
+
+function updateMarkerColors() {
+  const markerColor = '#ff6b6b';
+  
+  // Update existing markers
+  state.markers.forEach(marker => {
+    const element = marker.getElement();
+    if (element) {
+      const markerDiv = element.querySelector('.simple-marker') || element;
+      if (markerDiv) {
+        markerDiv.style.background = markerColor;
+        // Update the inner marker color too
+        const innerMarker = markerDiv.querySelector('div') || markerDiv.children[0];
+        if (innerMarker) {
+          innerMarker.style.background = markerColor;
+        }
+      }
+    }
+  });
+}
+
+function updateRouteColors() {
+  if (!state.currentRoute || !state.routingService) return;
+  
+  const routeColor = '#4da6ff';
+  state.routingService.updateRouteColor(routeColor);
+}
+
+function updateLayerControlStyling() {
+  const layerControlContainer = document.querySelector('.leaflet-control-layers');
+  if (layerControlContainer) {
+    layerControlContainer.style.background = 'rgba(45, 45, 45, 0.9)';
+    layerControlContainer.style.border = '1px solid #404040';
+    layerControlContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
+    
+    // Update layer names styling
+    const layerNames = layerControlContainer.querySelectorAll('.leaflet-control-layers-list label');
+    layerNames.forEach(label => {
+      label.style.color = '#cccccc';
+    });
+  }
+}
+
 // ===== STATE =====
 const state = {
   markers: new Map(),
@@ -14,7 +287,8 @@ const state = {
   routingService: null,
   currentRoute: null,
   currentTransportMode: 'driving',
-  routePanelExpanded: true
+  routePanelExpanded: true,
+  currentTheme: 'dark'
 };
 
 // ===== UTILITY FUNCTIONS =====
@@ -121,7 +395,46 @@ function initializeMap() {
 }
 
 function addMapLayers(map) {
-  const baseLayers = {
+  const config = window.config || config;
+  
+  // Mapbox styles - requires Mapbox access token
+  const mapboxStyles = {
+    "Default": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Faded": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Cool": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Dark 2D": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Light 2D": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Satellite": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a>', maxZoom: 20 }
+    ),
+    "Outdoors": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Warm": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    )
+  };
+
+  // Fallback styles for when Mapbox is not available
+  const fallbackStyles = {
     "Street Map": L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       { attribution: "© OpenStreetMap contributors", maxZoom: 19 }
@@ -150,17 +463,111 @@ function addMapLayers(map) {
     )
   };
 
-  baseLayers["Street Map"].addTo(map);
-  L.control.layers(baseLayers, null, { position: 'bottomright' }).addTo(map);
+  // Use Mapbox styles if access token is available, otherwise use fallbacks
+  const baseLayers = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE' 
+    ? mapboxStyles 
+    : fallbackStyles;
+
+  // Add default layer
+  const defaultLayer = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE' 
+    ? baseLayers["Default"] 
+    : baseLayers["Street Map"];
+
+  defaultLayer.addTo(map);
   
-  // Position zoom controls in bottom left
+  // Position zoom controls in bottom left with offset to avoid overlap
   map.zoomControl.setPosition('bottomleft');
+  
+  // Add custom styling to layer control
+  setTimeout(() => {
+    const layerControlContainer = document.querySelector('.leaflet-control-layers');
+    if (layerControlContainer) {
+      // Position layer control with offset from bottom left to avoid zoom controls
+      layerControlContainer.style.position = 'absolute';
+      layerControlContainer.style.bottom = '20px';
+      layerControlContainer.style.left = '20px';
+      layerControlContainer.style.zIndex = '1000';
+      layerControlContainer.style.background = 'rgba(255, 255, 255, 0.9)';
+      layerControlContainer.style.border = '1px solid #e0e0e0';
+      layerControlContainer.style.borderRadius = '8px';
+      layerControlContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+      layerControlContainer.style.maxHeight = '300px';
+      layerControlContainer.style.overflowY = 'auto';
+      layerControlContainer.style.width = '200px'; // Fixed width for better layout
+      
+      // Style layer names
+      const layerNames = layerControlContainer.querySelectorAll('.leaflet-control-layers-list label');
+      layerNames.forEach(label => {
+        label.style.fontWeight = '500';
+        label.style.color = '#333';
+        label.style.fontSize = '14px';
+      });
+    }
+  }, 100);
 }
 
 // ===== MARKER MANAGEMENT =====
 
 function addMarker(map, latlng, name, list = "default") {
-  const marker = L.marker(latlng, { listId: list }).addTo(map);
+  // Create a simple, highly visible marker icon
+  const markerColor = state.currentTheme === 'dark' ? '#ff6b6b' : '#ff4444';
+  const customIcon = L.divIcon({
+    html: `
+      <div style="width: 30px; height: 30px; background: ${markerColor}; border: 3px solid white; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; position: relative; z-index: 1000;">
+        <div style="width: 16px; height: 16px; background: white; border-radius: 50%;"></div>
+        <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; background: ${markerColor}; border-radius: 4px;"></div>
+      </div>
+    `,
+    className: 'simple-marker',
+    iconSize: [30, 38],
+    iconAnchor: [15, 38],
+    popupAnchor: [0, -38]
+  });
+
+  // Debug: Log the coordinates being used
+  console.log('Creating marker at coordinates:', latlng);
+  
+  const marker = L.marker(latlng, { 
+    listId: list,
+    icon: customIcon,
+    riseOnHover: true
+  }).addTo(map);
+  
+  // Debug: Log the marker element after creation
+  console.log('Marker element after creation:', marker.getElement());
+  
+  // Force the map to ensure the marker is visible
+  setTimeout(() => {
+    // Check if marker is within map bounds
+    const mapBounds = map.getBounds();
+    const markerLatLng = marker.getLatLng();
+    
+    console.log('Map bounds:', mapBounds);
+    console.log('Marker position:', markerLatLng);
+    console.log('Is marker in bounds?', mapBounds.contains(markerLatLng));
+    
+    // If marker is outside bounds, bring it into view
+    if (!mapBounds.contains(markerLatLng)) {
+      console.log('Marker is outside map bounds, adjusting view');
+      map.setView(markerLatLng, map.getZoom());
+    }
+    
+    // Force a re-render of the marker
+    if (marker.getElement()) {
+      marker.getElement().style.transform = 'translateZ(0)';
+      marker.getElement().style.zIndex = '1000';
+    }
+  }, 100);
+  
+  // Debug logging for marker creation
+  console.log('Marker created successfully:', {
+    id: marker._leaflet_id,
+    latlng: latlng,
+    name: name,
+    list: list,
+    element: marker.getElement(),
+    mapInstance: map
+  });
   
   state.markerNames.set(marker._leaflet_id, name);
   marker.bindPopup(createMarkerPopup(marker._leaflet_id, name, list));
@@ -171,6 +578,26 @@ function addMarker(map, latlng, name, list = "default") {
   state.lists.get(list).add(marker._leaflet_id);
   
   rebuildListUI();
+  
+  // Add subtle animation when marker is created
+  setTimeout(() => {
+    const element = marker.getElement();
+    if (element) {
+      element.style.transform = 'scale(1.05)';
+      setTimeout(() => {
+        element.style.transform = 'scale(1)';
+      }, 200);
+    }
+  }, 100);
+  
+  // Ensure marker is properly positioned after creation
+  setTimeout(() => {
+    const element = marker.getElement();
+    if (element) {
+      // Force a re-render to ensure proper positioning
+      element.style.transform = element.style.transform || 'translateZ(0)';
+    }
+  }, 200);
 }
 
 function createMarkerPopup(id, name, list) {
@@ -221,10 +648,10 @@ async function changeMarkerList(id) {
 // ===== UI STATE MANAGEMENT =====
 
 function updateUIState() {
-  // Update category list visibility
+  // Update category list visibility - only show when there are markers
   updateCategoriesUI();
   
-  // Update route information panel
+  // Update route information panel - only show when there's an active route
   updateRouteInfoPanel();
   
   // Update transport mode controls
@@ -232,6 +659,10 @@ function updateUIState() {
   
   // Update bottom controls based on available actions
   updateBottomControls();
+  
+  // IMPORTANT: Preserve theme styling when updating UI elements
+  // Only update the content and visibility, not the theme colors
+  // The theme colors should be managed by CSS custom properties and data-theme attribute
 }
 
 function updateCategoriesUI() {
@@ -244,6 +675,8 @@ function updateCategoriesUI() {
     return;
   }
 
+  // Only update the categories list content, don't force it to be visible
+  // The visibility should be controlled by user interaction, not automatically
   box.innerHTML = "";  
   
   state.lists.forEach((set, name) => {
@@ -270,6 +703,9 @@ function updateCategoriesUI() {
     item.appendChild(label);
     box.appendChild(item);
   });
+  
+  // IMPORTANT: Preserve theme styling when updating categories
+  // Only update content, not theme colors - theme should be managed by CSS
 }
 
 function updateRouteInfoPanel() {
@@ -277,8 +713,9 @@ function updateRouteInfoPanel() {
   const routePanel = document.querySelector(".route-info-panel");
   
   if (!state.currentRoute) {
-    routeInfo.innerHTML = `<p style="color: #666; font-size: 14px; margin: 0;">No route created yet</p>`;
-    if (routePanel) routePanel.style.display = "block"; // Always show the panel
+    routeInfo.innerHTML = `<p style="color: var(--text-muted); font-size: 14px; margin: 0;">No route created yet</p>`;
+    // Don't force the panel to be visible when there's no route
+    // The panel visibility should be controlled by user interaction
     return;
   }
   
@@ -289,20 +726,23 @@ function updateRouteInfoPanel() {
   
   routeInfo.innerHTML = `
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px;">
-      <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #e0e0e0;">
-        <div style="font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Distance</div>
-        <div style="font-size: 16px; font-weight: 700; color: #333;">${formatDistance(routeData.distance)}</div>
+      <div style="background: var(--panel-bg); padding: 8px; border-radius: 6px; border: 1px solid var(--panel-border);">
+        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Distance</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--text-primary);">${formatDistance(routeData.distance)}</div>
       </div>
-      <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #e0e0e0;">
-        <div style="font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Time</div>
-        <div style="font-size: 16px; font-weight: 700; color: #333;">${formatTime(routeData.duration)}</div>
+      <div style="background: var(--panel-bg); padding: 8px; border-radius: 6px; border: 1px solid var(--panel-border);">
+        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Time</div>
+        <div style="font-size: 16px; font-weight: 700; color: var(--text-primary);">${formatTime(routeData.duration)}</div>
       </div>
     </div>
-    <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e0e0e0;">
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--panel-bg); border-radius: 6px; border: 1px solid var(--panel-border);">
       <span style="width: 12px; height: 12px; border-radius: 50%; background: ${getModeColor(state.currentTransportMode)}; display: inline-block;"></span>
-      <span style="font-size: 14px; font-weight: 600; color: #333;">${getModeDisplayName(state.currentTransportMode)}</span>
+      <span style="font-size: 14px; font-weight: 600; color: var(--text-primary);">${getModeDisplayName(state.currentTransportMode)}</span>
     </div>
   `;
+  
+  // IMPORTANT: Preserve theme styling when updating route info
+  // Only update content, not theme colors - theme should be managed by CSS
 }
 
 function updateTransportControls() {
@@ -310,6 +750,9 @@ function updateTransportControls() {
   document.querySelectorAll('.transport-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.mode === state.currentTransportMode);
   });
+  
+  // IMPORTANT: Preserve theme styling when updating transport controls
+  // Only update button states, not theme colors - theme should be managed by CSS
 }
 
 function updateBottomControls() {
@@ -766,6 +1209,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setupLocationTracking(map);
   setupEventHandlers(map);
   
+  // Apply dark theme on initialization
+  applyDarkTheme();
+  
   // Add directions toggle functionality for the new inline directions section
   const directionsHeader = document.querySelector('.directions-header-inline');
   if (directionsHeader) {
@@ -799,4 +1245,361 @@ document.addEventListener('DOMContentLoaded', () => {
   // Make functions available globally for popup buttons
   window.deleteMarker = deleteMarker;
   window.changeMarkerList = changeMarkerList;
+  
+  // Make debug functions available globally
+  window.debugMarkers = debugMarkers;
+  window.checkMarkerIssues = checkMarkerIssues;
+  window.fixLeafletIconPaths = fixLeafletIconPaths;
+  window.ensureMarkerVisibility = ensureMarkerVisibility;
+  
+  // Initialize map styles dropdown
+  setupMapTypesDropdown(map);
+  
+  // Run initial debug after DOM is fully loaded
+  setTimeout(() => {
+    console.log('=== RUNNING INITIAL MARKER DIAGNOSTICS ===');
+    debugMarkers();
+    
+    // Add a visual indicator that markers should be working
+    console.log('✅ Marker fixes applied. Try clicking on the map to add markers!');
+    console.log('💡 If markers still don\'t appear, run debugMarkers() in console for more info');
+  }, 1000);
 });
+
+// ===== MARKER DEBUGGING AND FIXES =====
+
+/**
+ * Debug function to check marker visibility issues
+ */
+function debugMarkers() {
+  console.log('=== MARKER DEBUG ===');
+  console.log('Leaflet version:', L.version);
+  console.log('Map instance:', window.mapInstance);
+  console.log('Markers in state:', state.markers.size);
+  
+  // Check if markers exist in DOM
+  const markerElements = document.querySelectorAll('.leaflet-marker-icon');
+  console.log('Marker DOM elements found:', markerElements.length);
+  
+  if (markerElements.length > 0) {
+    console.log('First marker element:', markerElements[0]);
+    console.log('Marker computed styles:', window.getComputedStyle(markerElements[0]));
+  }
+  
+  // Check CSS loading
+  const leafletCSS = Array.from(document.styleSheets).find(sheet => 
+    sheet.href && sheet.href.includes('leaflet.css')
+  );
+  console.log('Leaflet CSS loaded:', !!leafletCSS);
+  
+  // Test marker creation with standard Leaflet marker
+  if (window.mapInstance) {
+    try {
+      // Use current map center for test marker to ensure it's visible
+      const center = window.mapInstance.getCenter();
+      const testMarker = L.marker([center.lat, center.lng]).addTo(window.mapInstance);
+      console.log('Test standard marker created at map center:', testMarker);
+      console.log('Test marker element:', testMarker.getElement());
+      
+      // Remove test marker after 3 seconds
+      setTimeout(() => {
+        if (window.mapInstance && window.mapInstance.hasLayer(testMarker)) {
+          window.mapInstance.removeLayer(testMarker);
+        }
+      }, 3000);
+    } catch (error) {
+      console.error('Test marker creation failed:', error);
+    }
+  }
+  
+  // Check for common marker issues
+  checkMarkerIssues();
+}
+
+/**
+ * Check for common marker visibility issues
+ */
+function checkMarkerIssues() {
+  console.log('=== CHECKING MARKER ISSUES ===');
+  
+  // 1. Check if Leaflet default icons are missing
+  const iconTest = new Image();
+  iconTest.onload = () => console.log('Leaflet default icon loads successfully');
+  iconTest.onerror = () => {
+    console.warn('Leaflet default icon missing - applying fix');
+    fixLeafletIconPaths();
+  };
+  iconTest.src = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png';
+  
+  // 2. Check CSS conflicts
+  const mapElement = document.getElementById('map');
+  if (mapElement) {
+    const mapStyles = window.getComputedStyle(mapElement);
+    console.log('Map z-index:', mapStyles.zIndex);
+    console.log('Map position:', mapStyles.position);
+  }
+  
+  // 3. Check panel z-index conflicts
+  const panels = document.querySelectorAll('.left-panel, .right-panel');
+  panels.forEach((panel, index) => {
+    const panelStyles = window.getComputedStyle(panel);
+    console.log(`Panel ${index} z-index:`, panelStyles.zIndex);
+  });
+}
+
+/**
+ * Fix Leaflet icon path issues
+ */
+function fixLeafletIconPaths() {
+  console.log('Applying Leaflet icon path fix...');
+  
+  try {
+    // Remove the default icon URL getter that causes issues
+    delete L.Icon.Default.prototype._getIconUrl;
+    
+    // Set correct icon paths
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+    });
+    
+    console.log('Leaflet icon paths fixed successfully');
+  } catch (error) {
+    console.error('Failed to fix Leaflet icon paths:', error);
+  }
+}
+
+/**
+ * Force marker visibility by ensuring CSS is applied correctly
+ */
+function ensureMarkerVisibility() {
+  console.log('Ensuring marker visibility...');
+  
+  // Add inline styles to ensure markers are visible
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Force marker visibility */
+    .leaflet-marker-icon {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      filter: none !important;
+      -webkit-transform: translateZ(0) !important;
+      transform: translateZ(0) !important;
+      z-index: 1000 !important;
+    }
+    
+    .simple-marker {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      z-index: 1000 !important;
+      filter: none !important;
+      -webkit-transform: translateZ(0) !important;
+      transform: translateZ(0) !important;
+    }
+    
+    /* Ensure marker containers are visible */
+    .leaflet-marker-icon .simple-marker * {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  console.log('Marker visibility styles applied');
+}
+
+// ===== MAP TYPES DROPDOWN FUNCTIONALITY =====
+
+function setupMapTypesDropdown(map) {
+  const toggleBtn = document.getElementById('mapTypesToggle');
+  const dropdown = document.getElementById('mapTypesDropdown');
+  const currentTypeSpan = document.querySelector('.current-map-type');
+  const options = document.querySelectorAll('.map-type-option');
+  
+  // Mapbox styles configuration
+  const config = window.config || config;
+  const mapboxStyles = {
+    "Default": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Faded": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Cool": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Dark 2D": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Light 2D": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Satellite": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a>', maxZoom: 20 }
+    ),
+    "Outdoors": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    ),
+    "Warm": L.tileLayer(
+      `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=${config.mapbox.accessToken}`,
+      { attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 20 }
+    )
+  };
+
+  // Fallback styles for when Mapbox is not available
+  const fallbackStyles = {
+    "Street Map": L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      { attribution: "© OpenStreetMap contributors", maxZoom: 19 }
+    ),
+    "Satellite": L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { attribution: "© Esri, Maxar, Earthstar Geographics, USDA FSA", maxZoom: 19 }
+    ),
+    "Satellite + Labels": L.layerGroup([
+      L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "© Esri, Maxar, Earthstar Geographics", maxZoom: 19 }
+      ),
+      L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        { maxZoom: 19 }
+      )
+    ]),
+    "Topographic": L.tileLayer(
+      "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+      { attribution: "© OpenTopoMap contributors", maxZoom: 17 }
+    ),
+    "Dark Mode": L.tileLayer(
+      "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+      { attribution: "© Stadia Maps © OpenMapTiles © OpenStreetMap contributors", maxZoom: 20 }
+    )
+  };
+
+  // Determine which styles to use
+  const baseLayers = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE' 
+    ? mapboxStyles 
+    : fallbackStyles;
+
+  // Set default layer
+  const defaultLayer = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE' 
+    ? baseLayers["Default"] 
+    : baseLayers["Street Map"];
+
+  // Store current layer reference
+  let currentLayer = defaultLayer;
+  currentLayer.addTo(map);
+
+  // Toggle dropdown visibility
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown.classList.contains('open');
+    
+    if (isOpen) {
+      closeDropdown();
+    } else {
+      openDropdown();
+    }
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!toggleBtn.contains(e.target) && !dropdown.contains(e.target)) {
+      closeDropdown();
+    }
+  });
+
+  // Handle option selection
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      const styleName = option.dataset.style;
+      
+      // Update UI
+      options.forEach(opt => {
+        opt.classList.remove('active');
+        opt.setAttribute('aria-selected', 'false');
+      });
+      option.classList.add('active');
+      option.setAttribute('aria-selected', 'true');
+      
+      // Update current type display
+      currentTypeSpan.textContent = styleName;
+      
+      // Change map layer
+      if (baseLayers[styleName]) {
+        if (currentLayer) {
+          map.removeLayer(currentLayer);
+        }
+        currentLayer = baseLayers[styleName];
+        currentLayer.addTo(map);
+      }
+      
+      closeDropdown();
+    });
+  });
+
+  // Keyboard navigation
+  toggleBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      const isOpen = dropdown.classList.contains('open');
+      if (isOpen) {
+        closeDropdown();
+      } else {
+        openDropdown();
+        // Focus first option
+        const firstOption = dropdown.querySelector('.map-type-option');
+        if (firstOption) firstOption.focus();
+      }
+    }
+  });
+
+  dropdown.addEventListener('keydown', (e) => {
+    const optionsArray = Array.from(options);
+    const focusedIndex = optionsArray.findIndex(opt => opt === document.activeElement);
+    
+    if (e.key === 'Escape') {
+      closeDropdown();
+      toggleBtn.focus();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nextIndex = (focusedIndex + 1) % optionsArray.length;
+      optionsArray[nextIndex].focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prevIndex = focusedIndex <= 0 ? optionsArray.length - 1 : focusedIndex - 1;
+      optionsArray[prevIndex].focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      optionsArray[0].focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      optionsArray[optionsArray.length - 1].focus();
+    }
+  });
+
+  function openDropdown() {
+    dropdown.classList.add('open');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    toggleBtn.classList.add('open');
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('open');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    toggleBtn.classList.remove('open');
+  }
+}
