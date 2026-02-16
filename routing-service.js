@@ -3,7 +3,40 @@
 
 class RoutingService {
   constructor() {
-    this.config = window.config || config;
+    const userConfig = window.config || config || {};
+
+    // Keep `config.js` client-only (API stuff). Everything else gets sane defaults here.
+    this.config = {
+      ...userConfig,
+      mapbox: {
+        accessToken: '',
+        drivingEndpoint: 'https://api.mapbox.com/directions/v5/mapbox/driving',
+        walkingEndpoint: 'https://api.mapbox.com/directions/v5/mapbox/walking',
+        cyclingEndpoint: 'https://api.mapbox.com/directions/v5/mapbox/cycling',
+        optimizationEndpoint: 'https://api.mapbox.com/optimized-trips/v1/mapbox',
+        ...(userConfig.mapbox || {}),
+      },
+      fallbackServices: {
+        osrm: {
+          enabled: true,
+          baseUrl: 'https://router.project-osrm.org/route/v1',
+          ...(userConfig.fallbackServices?.osrm || {}),
+        },
+        ...(userConfig.fallbackServices || {}),
+      },
+      routeStyles: {
+        driving: { color: '#007bff', weight: 5, opacity: 0.8, dashArray: 'none' },
+        walking: { color: '#28a745', weight: 4, opacity: 0.9, dashArray: '5, 5' },
+        cycling: { color: '#ffc107', weight: 4, opacity: 0.9, dashArray: '8, 4, 2, 4' },
+        ...(userConfig.routeStyles || {}),
+      },
+      routeValidation: {
+        minDistanceDifference: 50,
+        minTimeDifference: 60,
+        similarityThreshold: 0.85,
+        ...(userConfig.routeValidation || {}),
+      },
+    };
     this.currentRoute = null;
     this.routeHistory = [];
   }
@@ -47,7 +80,7 @@ class RoutingService {
       const service = await this.getRoutingService(mode);
       
       // Create route
-      const routeData = await service.getRoute(start, waypoints);
+      let routeData = await service.getRoute(start, waypoints);
       
       // Validate route quality
       const validation = this.validateRoute(routeData, mode);
@@ -315,9 +348,9 @@ class RoutingService {
    */
   getModeDisplayName(mode) {
     const names = {
-      'driving': '🚗 Driving',
-      'walking': '🚶 Walking',
-      'cycling': '🚴 Cycling'
+      'driving': 'Driving',
+      'walking': 'Walking',
+      'cycling': 'Cycling'
     };
     return names[mode] || mode;
   }
@@ -355,7 +388,6 @@ class RoutingService {
     alert.className = 'route-error-alert';
     alert.innerHTML = `
       <div class="alert-content">
-        <span class="alert-icon">⚠️</span>
         <span class="alert-message">${message}</span>
         <button class="alert-close">×</button>
       </div>

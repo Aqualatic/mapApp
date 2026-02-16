@@ -39,8 +39,8 @@ function updateAllUIElements() {
     }
   });
   
-  // Update all buttons
-  const buttons = document.querySelectorAll('.gm-button, .transport-btn, .btn');
+  // Update all buttons (but don't override transport button styles - let CSS handle it)
+  const buttons = document.querySelectorAll('.gm-button, .btn');
   buttons.forEach(btn => {
     if (btn) {
       btn.style.background = '#2d2d2d';
@@ -49,25 +49,8 @@ function updateAllUIElements() {
     }
   });
   
-  // Update active transport buttons
-  const activeButtons = document.querySelectorAll('.transport-btn.active');
-  activeButtons.forEach(btn => {
-    if (btn) {
-      if (btn.classList.contains('driving')) {
-        btn.style.background = '#1a3d5e';
-        btn.style.borderColor = '#2a5d8f';
-        btn.style.color = '#9ec6ff';
-      } else if (btn.classList.contains('walking')) {
-        btn.style.background = '#2a5d40';
-        btn.style.borderColor = '#3a8f60';
-        btn.style.color = '#a8ffcc';
-      } else if (btn.classList.contains('cycling')) {
-        btn.style.background = '#5d4000';
-        btn.style.borderColor = '#8f6000';
-        btn.style.color = '#ffd66b';
-      }
-    }
-  });
+  // Don't apply inline styles to transport buttons - let CSS classes handle styling
+  // The active class will be managed by updateTransportControls()
   
   // Update headings and labels
   const headings = document.querySelectorAll('h3, h4, .transport-header');
@@ -130,7 +113,7 @@ function updateAllUIElements() {
       // Update step number background
       const stepNumber = step.querySelector('.step-number');
       if (stepNumber) {
-        stepNumber.style.background = '#4da6ff';
+        stepNumber.style.background = '#0a84ff';
         stepNumber.style.color = '#ffffff';
       }
       
@@ -148,7 +131,7 @@ function updateAllUIElements() {
           
           const stepDistance = stepDetails.querySelector('.step-distance');
           if (stepDistance) {
-            stepDistance.style.color = '#4da6ff';
+            stepDistance.style.color = '#0a84ff';
           }
         }
         
@@ -236,29 +219,21 @@ function updateAllUIElements() {
 }
 
 function updateMarkerColors() {
-  const markerColor = '#ff6b6b';
-  
-  // Update existing markers
+  const markerColor = '#ff453a';
   state.markers.forEach(marker => {
-    const element = marker.getElement();
-    if (element) {
-      const markerDiv = element.querySelector('.simple-marker') || element;
-      if (markerDiv) {
-        markerDiv.style.background = markerColor;
-        // Update the inner marker color too
-        const innerMarker = markerDiv.querySelector('div') || markerDiv.children[0];
-        if (innerMarker) {
-          innerMarker.style.background = markerColor;
-        }
-      }
-    }
+    const el = marker.getElement();
+    if (!el) return;
+    const pin = el.querySelector('.marker-pin');
+    const tail = el.querySelector('.marker-pin-tail');
+    if (pin) pin.style.background = markerColor;
+    if (tail) tail.style.background = markerColor;
   });
 }
 
 function updateRouteColors() {
   if (!state.currentRoute || !state.routingService) return;
   
-  const routeColor = '#4da6ff';
+  const routeColor = '#0a84ff';
   state.routingService.updateRouteColor(routeColor);
 }
 
@@ -475,31 +450,26 @@ function addMapLayers(map) {
 
   defaultLayer.addTo(map);
   
-  // Position zoom controls in bottom left with offset to avoid overlap
-  map.zoomControl.setPosition('bottomleft');
-  
-  // Add custom styling to layer control
+  // Zoom control: bottom-right (position set in CSS with safe-area)
+  map.zoomControl.setPosition('bottomright');
+
+  // Add custom styling to layer control (position from CSS: bottom-right above zoom)
   setTimeout(() => {
     const layerControlContainer = document.querySelector('.leaflet-control-layers');
     if (layerControlContainer) {
-      // Position layer control with offset from bottom left to avoid zoom controls
-      layerControlContainer.style.position = 'absolute';
-      layerControlContainer.style.bottom = '20px';
-      layerControlContainer.style.left = '20px';
       layerControlContainer.style.zIndex = '1000';
-      layerControlContainer.style.background = 'rgba(255, 255, 255, 0.9)';
-      layerControlContainer.style.border = '1px solid #e0e0e0';
+      layerControlContainer.style.background = 'rgba(45, 45, 45, 0.9)';
+      layerControlContainer.style.border = '1px solid rgba(255, 255, 255, 0.08)';
       layerControlContainer.style.borderRadius = '8px';
-      layerControlContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+      layerControlContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
       layerControlContainer.style.maxHeight = '300px';
       layerControlContainer.style.overflowY = 'auto';
-      layerControlContainer.style.width = '200px'; // Fixed width for better layout
-      
-      // Style layer names
+      layerControlContainer.style.width = '200px';
+
       const layerNames = layerControlContainer.querySelectorAll('.leaflet-control-layers-list label');
       layerNames.forEach(label => {
         label.style.fontWeight = '500';
-        label.style.color = '#333';
+        label.style.color = '#cccccc';
         label.style.fontSize = '14px';
       });
     }
@@ -508,24 +478,34 @@ function addMapLayers(map) {
 
 // ===== MARKER MANAGEMENT =====
 
-function addMarker(map, latlng, name, list = "default") {
-  // Create a simple, highly visible marker icon
-  const markerColor = state.currentTheme === 'dark' ? '#ff6b6b' : '#ff4444';
-  const customIcon = L.divIcon({
+// Shared marker icon: same shape/size for all location-style markers (user + added locations)
+const MARKER_ICON_SIZE = 30;
+const MARKER_ICON_HEIGHT = 38;
+
+function createMarkerIcon(color, className = 'simple-marker') {
+  return L.divIcon({
     html: `
-      <div style="width: 30px; height: 30px; background: ${markerColor}; border: 3px solid white; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; position: relative; z-index: 1000;">
-        <div style="width: 16px; height: 16px; background: white; border-radius: 50%;"></div>
-        <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; background: ${markerColor}; border-radius: 4px;"></div>
+      <div class="marker-pin" style="width:${MARKER_ICON_SIZE}px;height:${MARKER_ICON_SIZE}px;background:${color};border:3px solid white;border-radius:50%;box-shadow:0 4px 8px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;position:relative;">
+        <div class="marker-pin-dot" style="width:14px;height:14px;background:white;border-radius:50%;"></div>
+        <div class="marker-pin-tail" style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:${color};border-radius:3px;"></div>
       </div>
     `,
-    className: 'simple-marker',
-    iconSize: [30, 38],
-    iconAnchor: [15, 38],
-    popupAnchor: [0, -38]
+    className,
+    iconSize: [MARKER_ICON_SIZE, MARKER_ICON_HEIGHT],
+    iconAnchor: [MARKER_ICON_SIZE / 2, MARKER_ICON_HEIGHT],
+    popupAnchor: [0, -MARKER_ICON_HEIGHT]
   });
+}
+
+function addMarker(map, latlng, name, list = "default") {
+  const markerColor = state.currentTheme === 'dark' ? '#ff453a' : '#ff4444';
+  const customIcon = createMarkerIcon(markerColor, 'simple-marker');
 
   // Debug: Log the coordinates being used
   console.log('Creating marker at coordinates:', latlng);
+  
+  // Ensure map size is valid before adding marker
+  map.invalidateSize();
   
   const marker = L.marker(latlng, { 
     listId: list,
@@ -533,31 +513,40 @@ function addMarker(map, latlng, name, list = "default") {
     riseOnHover: true
   }).addTo(map);
   
-  // Debug: Log the marker element after creation
-  console.log('Marker element after creation:', marker.getElement());
+  // Immediately update marker position to ensure correct rendering
+  // This fixes the issue where markers don't appear in the right spot initially
+  const updateMarkerPosition = () => {
+    if (marker._icon) {
+      const point = map.latLngToLayerPoint(marker.getLatLng());
+      L.DomUtil.setPosition(marker._icon, point);
+    }
+  };
   
-  // Force the map to ensure the marker is visible
-  setTimeout(() => {
-    // Check if marker is within map bounds
-    const mapBounds = map.getBounds();
-    const markerLatLng = marker.getLatLng();
-    
-    console.log('Map bounds:', mapBounds);
-    console.log('Marker position:', markerLatLng);
-    console.log('Is marker in bounds?', mapBounds.contains(markerLatLng));
-    
-    // If marker is outside bounds, bring it into view
-    if (!mapBounds.contains(markerLatLng)) {
-      console.log('Marker is outside map bounds, adjusting view');
-      map.setView(markerLatLng, map.getZoom());
-    }
-    
-    // Force a re-render of the marker
-    if (marker.getElement()) {
-      marker.getElement().style.transform = 'translateZ(0)';
-      marker.getElement().style.zIndex = '1000';
-    }
-  }, 100);
+  // Update position immediately
+  updateMarkerPosition();
+  
+  // Also update after the next frame to catch any timing issues
+  requestAnimationFrame(() => {
+    updateMarkerPosition();
+    // Invalidate size to trigger a redraw
+    map.invalidateSize();
+  });
+  
+  // Ensure position is correct after any map movement completes
+  const positionHandler = () => {
+    updateMarkerPosition();
+    map.off('moveend', positionHandler);
+  };
+  map.once('moveend', positionHandler);
+  
+  // Check if marker is within map bounds and adjust view if needed
+  const mapBounds = map.getBounds();
+  const markerLatLng = marker.getLatLng();
+  
+  if (!mapBounds.contains(markerLatLng)) {
+    // Smoothly pan to include the marker
+    map.panTo(markerLatLng, { animate: true, duration: 0.5 });
+  }
   
   // Debug logging for marker creation
   console.log('Marker created successfully:', {
@@ -579,33 +568,91 @@ function addMarker(map, latlng, name, list = "default") {
   
   rebuildListUI();
   
-  // Add subtle animation when marker is created
-  setTimeout(() => {
-    const element = marker.getElement();
-    if (element) {
-      element.style.transform = 'scale(1.05)';
-      setTimeout(() => {
-        element.style.transform = 'scale(1)';
-      }, 200);
-    }
-  }, 100);
-  
-  // Ensure marker is properly positioned after creation
-  setTimeout(() => {
-    const element = marker.getElement();
-    if (element) {
-      // Force a re-render to ensure proper positioning
-      element.style.transform = element.style.transform || 'translateZ(0)';
-    }
-  }, 200);
+  // Add subtle animation when marker is created (after positioning is correct)
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const element = marker.getElement();
+      if (element) {
+        // Store original transform for animation
+        const originalTransform = element.style.transform;
+        element.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+          element.style.transform = originalTransform || '';
+        }, 200);
+      }
+    }, 100);
+  });
 }
 
 function createMarkerPopup(id, name, list) {
+  const marker = state.markers.get(id);
+  const markerLatLng = marker ? marker.getLatLng() : null;
+  const lat = markerLatLng ? markerLatLng.lat.toFixed(6) : '';
+  const lng = markerLatLng ? markerLatLng.lng.toFixed(6) : '';
+  
   return `
-    <b>${name}</b><br><i>${list}</i><br>
-    <button onclick="deleteMarker(${id})">Delete</button><br>
-    <button onclick="changeMarkerList(${id})">Change Category</button>
+    <div class="marker-popup-container">
+      <div class="marker-popup-header">
+        <div class="marker-popup-title">${escapeHtml(name)}</div>
+        <div class="marker-popup-category">${escapeHtml(list)}</div>
+      </div>
+      
+      ${markerLatLng ? `
+      <div class="marker-popup-coords">
+        <div class="coord-item">
+          <span class="coord-label">Lat:</span>
+          <span class="coord-value">${lat}</span>
+        </div>
+        <div class="coord-item">
+          <span class="coord-label">Lng:</span>
+          <span class="coord-value">${lng}</span>
+        </div>
+      </div>
+      ` : ''}
+      
+      <div class="marker-popup-actions">
+        <button class="popup-action-btn delete-btn" onclick="deleteMarker(${id})" title="Delete this location">
+          <span class="btn-text">Delete</span>
+        </button>
+        
+        <button class="popup-action-btn edit-btn" onclick="changeMarkerList(${id})" title="Change category">
+          <span class="btn-text">Edit Category</span>
+        </button>
+      </div>
+      
+      <div class="marker-popup-footer">
+        <button class="popup-close-btn" onclick="closePopup()">Close</button>
+      </div>
+    </div>
   `;
+}
+
+// Helper function to escape HTML to prevent XSS
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Function to close popup
+function closePopup() {
+  if (window.mapInstance) {
+    window.mapInstance.closePopup();
+  }
+}
+
+// Function to add marker to route
+function addMarkerToRoute(id) {
+  const marker = state.markers.get(id);
+  if (!marker) return;
+  
+  // Center map on marker and close popup
+  window.mapInstance.setView(marker.getLatLng(), window.mapInstance.getZoom());
+  window.mapInstance.closePopup();
+  
+  // Show confirmation
+  const markerName = state.markerNames.get(id);
+  alert(`Added "${markerName}" to route planning. Click "Draw Route" to create route with all visible markers.`);
 }
 
 function deleteMarker(id) {
@@ -746,9 +793,14 @@ function updateRouteInfoPanel() {
 }
 
 function updateTransportControls() {
-  // Update transport mode buttons
+  // Update transport mode buttons - ensure active state matches current mode
   document.querySelectorAll('.transport-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.mode === state.currentTransportMode);
+    const isActive = btn.dataset.mode === state.currentTransportMode;
+    if (isActive) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
   });
   
   // IMPORTANT: Preserve theme styling when updating transport controls
@@ -791,9 +843,9 @@ function getModeColor(mode) {
 
 function getModeDisplayName(mode) {
   const names = {
-    'driving': '🚗 Driving',
-    'walking': '🚶 Walking', 
-    'cycling': '🚴 Cycling'
+    'driving': 'Driving',
+    'walking': 'Walking',
+    'cycling': 'Cycling'
   };
   return names[mode] || mode;
 }
@@ -814,7 +866,8 @@ function setupLocationTracking(map) {
       const pos = [coords.latitude, coords.longitude];
       
       if (!state.userMarker) {
-        state.userMarker = L.marker(pos).bindPopup("You are here");
+        const userIcon = createMarkerIcon('#0a84ff', 'simple-marker user-location-marker');
+        state.userMarker = L.marker(pos, { icon: userIcon }).bindPopup("You are here");
         if (state.showUser) state.userMarker.addTo(map);
       } else {
         state.userMarker.setLatLng(pos);
@@ -902,7 +955,7 @@ async function createEnhancedRoute(map, start, waypoints, mode = "driving") {
       list.innerHTML = generateDirectionsList(routeData.steps, mode);
       // Show directions section
       list.style.display = 'flex';
-      headerText.textContent = '📍 Hide Turn-by-Turn Directions';
+      headerText.textContent = 'Hide Turn-by-Turn Directions';
     }
     
     return routeData;
@@ -927,7 +980,7 @@ function showDirections() {
     
     if (list && headerText) {
       list.style.display = 'flex';
-      headerText.textContent = '📍 Hide Turn-by-Turn Directions';
+      headerText.textContent = 'Hide Turn-by-Turn Directions';
     }
   } else {
     alert('Please create a route first to view directions.');
@@ -985,9 +1038,9 @@ function generateDirectionsList(steps, mode) {
           const markerList = marker.options.listId;
           
           if (markerProximityInfo) {
-            markerProximityInfo += `<br><span class="marker-proximity">📍 Near: ${markerName} (${markerList})</span>`;
+            markerProximityInfo += `<br><span class="marker-proximity">Near: ${markerName} (${markerList})</span>`;
           } else {
-            markerProximityInfo = `<span class="marker-proximity">📍 Near: ${markerName} (${markerList})</span>`;
+            markerProximityInfo = `<span class="marker-proximity">Near: ${markerName} (${markerList})</span>`;
           }
         }
       });
@@ -1023,15 +1076,12 @@ function updateEnhancedTransportModeUI(map, currentMode) {
       <div class="transport-header">Transport Mode</div>
       <div class="transport-buttons">
         <button class="transport-btn driving ${currentMode === 'driving' ? 'active' : ''}" data-mode="driving">
-          <span class="btn-icon">🚗</span>
           <span class="btn-label">Driving</span>
         </button>
         <button class="transport-btn walking ${currentMode === 'walking' ? 'active' : ''}" data-mode="walking">
-          <span class="btn-icon">🚶</span>
           <span class="btn-label">Walking</span>
         </button>
         <button class="transport-btn cycling ${currentMode === 'cycling' ? 'active' : ''}" data-mode="cycling">
-          <span class="btn-icon">🚴</span>
           <span class="btn-label">Cycling</span>
         </button>
       </div>
@@ -1116,12 +1166,23 @@ function setupEventHandlers(map) {
   // Transport mode buttons
   document.querySelectorAll('.transport-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-      // Remove active class from all buttons
-      document.querySelectorAll('.transport-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      
       const newMode = btn.dataset.mode;
+      
+      // Don't do anything if clicking the already active mode
+      if (newMode === state.currentTransportMode) {
+        return;
+      }
+      
+      // Update state first
       state.currentTransportMode = newMode;
+      
+      // Update all buttons to reflect the new active state
+      document.querySelectorAll('.transport-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.dataset.mode === newMode) {
+          b.classList.add('active');
+        }
+      });
       
       if (state.currentRoute) {
         try {
@@ -1136,10 +1197,14 @@ function setupEventHandlers(map) {
         } catch (error) {
           console.error('Mode switch failed:', error);
           // Restore previous button state on error
-          state.currentTransportMode = 'driving'; // fallback to driving
-          document.querySelectorAll('.transport-btn').forEach(b => b.classList.remove('active'));
-          const prevBtn = document.querySelector('.transport-btn.driving');
-          if (prevBtn) prevBtn.classList.add('active');
+          const previousMode = state.currentRoute?.mode || 'driving';
+          state.currentTransportMode = previousMode;
+          document.querySelectorAll('.transport-btn').forEach(b => {
+            b.classList.remove('active');
+            if (b.dataset.mode === previousMode) {
+              b.classList.add('active');
+            }
+          });
         }
       } else {
         updateUIState();
@@ -1212,6 +1277,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Apply dark theme on initialization
   applyDarkTheme();
   
+  // Initialize transport mode controls to ensure correct active state
+  updateTransportControls();
+  
   // Add directions toggle functionality for the new inline directions section
   const directionsHeader = document.querySelector('.directions-header-inline');
   if (directionsHeader) {
@@ -1222,7 +1290,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (list.style.display === 'none' || !list.style.display) {
         list.style.display = 'flex';
-        headerText.textContent = '📍 Hide Turn-by-Turn Directions';
+        headerText.textContent = 'Hide Turn-by-Turn Directions';
         
         // If we have a route, show directions
         if (state.currentRoute) {
@@ -1237,7 +1305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         list.style.display = 'none';
-        headerText.textContent = '📍 Show Turn-by-Turn Directions';
+        headerText.textContent = 'Show Turn-by-Turn Directions';
       }
     });
   }
@@ -1245,174 +1313,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Make functions available globally for popup buttons
   window.deleteMarker = deleteMarker;
   window.changeMarkerList = changeMarkerList;
-  
-  // Make debug functions available globally
-  window.debugMarkers = debugMarkers;
-  window.checkMarkerIssues = checkMarkerIssues;
-  window.fixLeafletIconPaths = fixLeafletIconPaths;
-  window.ensureMarkerVisibility = ensureMarkerVisibility;
-  
+  window.closePopup = closePopup;
+  window.addMarkerToRoute = addMarkerToRoute;
+
   // Initialize map styles dropdown
   setupMapTypesDropdown(map);
-  
-  // Run initial debug after DOM is fully loaded
-  setTimeout(() => {
-    console.log('=== RUNNING INITIAL MARKER DIAGNOSTICS ===');
-    debugMarkers();
-    
-    // Add a visual indicator that markers should be working
-    console.log('✅ Marker fixes applied. Try clicking on the map to add markers!');
-    console.log('💡 If markers still don\'t appear, run debugMarkers() in console for more info');
-  }, 1000);
 });
-
-// ===== MARKER DEBUGGING AND FIXES =====
-
-/**
- * Debug function to check marker visibility issues
- */
-function debugMarkers() {
-  console.log('=== MARKER DEBUG ===');
-  console.log('Leaflet version:', L.version);
-  console.log('Map instance:', window.mapInstance);
-  console.log('Markers in state:', state.markers.size);
-  
-  // Check if markers exist in DOM
-  const markerElements = document.querySelectorAll('.leaflet-marker-icon');
-  console.log('Marker DOM elements found:', markerElements.length);
-  
-  if (markerElements.length > 0) {
-    console.log('First marker element:', markerElements[0]);
-    console.log('Marker computed styles:', window.getComputedStyle(markerElements[0]));
-  }
-  
-  // Check CSS loading
-  const leafletCSS = Array.from(document.styleSheets).find(sheet => 
-    sheet.href && sheet.href.includes('leaflet.css')
-  );
-  console.log('Leaflet CSS loaded:', !!leafletCSS);
-  
-  // Test marker creation with standard Leaflet marker
-  if (window.mapInstance) {
-    try {
-      // Use current map center for test marker to ensure it's visible
-      const center = window.mapInstance.getCenter();
-      const testMarker = L.marker([center.lat, center.lng]).addTo(window.mapInstance);
-      console.log('Test standard marker created at map center:', testMarker);
-      console.log('Test marker element:', testMarker.getElement());
-      
-      // Remove test marker after 3 seconds
-      setTimeout(() => {
-        if (window.mapInstance && window.mapInstance.hasLayer(testMarker)) {
-          window.mapInstance.removeLayer(testMarker);
-        }
-      }, 3000);
-    } catch (error) {
-      console.error('Test marker creation failed:', error);
-    }
-  }
-  
-  // Check for common marker issues
-  checkMarkerIssues();
-}
-
-/**
- * Check for common marker visibility issues
- */
-function checkMarkerIssues() {
-  console.log('=== CHECKING MARKER ISSUES ===');
-  
-  // 1. Check if Leaflet default icons are missing
-  const iconTest = new Image();
-  iconTest.onload = () => console.log('Leaflet default icon loads successfully');
-  iconTest.onerror = () => {
-    console.warn('Leaflet default icon missing - applying fix');
-    fixLeafletIconPaths();
-  };
-  iconTest.src = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png';
-  
-  // 2. Check CSS conflicts
-  const mapElement = document.getElementById('map');
-  if (mapElement) {
-    const mapStyles = window.getComputedStyle(mapElement);
-    console.log('Map z-index:', mapStyles.zIndex);
-    console.log('Map position:', mapStyles.position);
-  }
-  
-  // 3. Check panel z-index conflicts
-  const panels = document.querySelectorAll('.left-panel, .right-panel');
-  panels.forEach((panel, index) => {
-    const panelStyles = window.getComputedStyle(panel);
-    console.log(`Panel ${index} z-index:`, panelStyles.zIndex);
-  });
-}
-
-/**
- * Fix Leaflet icon path issues
- */
-function fixLeafletIconPaths() {
-  console.log('Applying Leaflet icon path fix...');
-  
-  try {
-    // Remove the default icon URL getter that causes issues
-    delete L.Icon.Default.prototype._getIconUrl;
-    
-    // Set correct icon paths
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-    });
-    
-    console.log('Leaflet icon paths fixed successfully');
-  } catch (error) {
-    console.error('Failed to fix Leaflet icon paths:', error);
-  }
-}
-
-/**
- * Force marker visibility by ensuring CSS is applied correctly
- */
-function ensureMarkerVisibility() {
-  console.log('Ensuring marker visibility...');
-  
-  // Add inline styles to ensure markers are visible
-  const style = document.createElement('style');
-  style.textContent = `
-    /* Force marker visibility */
-    .leaflet-marker-icon {
-      display: block !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-      pointer-events: auto !important;
-      filter: none !important;
-      -webkit-transform: translateZ(0) !important;
-      transform: translateZ(0) !important;
-      z-index: 1000 !important;
-    }
-    
-    .simple-marker {
-      display: block !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-      pointer-events: auto !important;
-      z-index: 1000 !important;
-      filter: none !important;
-      -webkit-transform: translateZ(0) !important;
-      transform: translateZ(0) !important;
-    }
-    
-    /* Ensure marker containers are visible */
-    .leaflet-marker-icon .simple-marker * {
-      display: block !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
-  `;
-  document.head.appendChild(style);
-  
-  console.log('Marker visibility styles applied');
-}
 
 // ===== MAP TYPES DROPDOWN FUNCTIONALITY =====
 

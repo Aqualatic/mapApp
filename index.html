@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Location Mapper</title>
   
   <!-- Leaflet CSS -->
@@ -39,23 +41,20 @@
       <h3>Transport Mode</h3>
       <div class="transport-buttons">
         <button class="transport-btn driving active" data-mode="driving">
-          <span class="btn-icon">🚗</span>
           <span class="btn-label">Driving</span>
         </button>
         <button class="transport-btn walking" data-mode="walking">
-          <span class="btn-icon">🚶</span>
           <span class="btn-label">Walking</span>
         </button>
         <button class="transport-btn cycling" data-mode="cycling">
-          <span class="btn-icon">🚴</span>
           <span class="btn-label">Cycling</span>
         </button>
       </div>
       
       <!-- Turn-by-Turn Directions Section -->
-      <div class="directions-section" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e0e0e0;">
+      <div class="directions-section">
         <div class="directions-header-inline">
-          <h4>📍 Show Turn-by-Turn Directions</h4>
+          <h4>Show Turn-by-Turn Directions</h4>
         </div>
         <div class="directions-list-inline" style="display: none; margin-top: 8px;">
           <!-- Directions will be inserted here -->
@@ -80,35 +79,27 @@
         </button>
         <div class="map-styles-menu" id="mapTypesDropdown" role="listbox" aria-label="Map Styles">
           <div class="map-type-option" data-style="Default" role="option" aria-selected="true">
-            <span class="option-icon">🗺️</span>
             <span class="option-label">Default</span>
           </div>
           <div class="map-type-option" data-style="Faded" role="option" aria-selected="false">
-            <span class="option-icon">🌤️</span>
             <span class="option-label">Faded</span>
           </div>
           <div class="map-type-option" data-style="Cool" role="option" aria-selected="false">
-            <span class="option-icon">🌲</span>
             <span class="option-label">Cool</span>
           </div>
           <div class="map-type-option" data-style="Dark 2D" role="option" aria-selected="false">
-            <span class="option-icon">🌑</span>
             <span class="option-label">Dark 2D</span>
           </div>
           <div class="map-type-option" data-style="Light 2D" role="option" aria-selected="false">
-            <span class="option-icon">☀️</span>
             <span class="option-label">Light 2D</span>
           </div>
           <div class="map-type-option" data-style="Satellite" role="option" aria-selected="false">
-            <span class="option-icon">🛰️</span>
             <span class="option-label">Satellite</span>
           </div>
           <div class="map-type-option" data-style="Outdoors" role="option" aria-selected="false">
-            <span class="option-icon">🏔️</span>
             <span class="option-label">Outdoors</span>
           </div>
           <div class="map-type-option" data-style="Warm" role="option" aria-selected="false">
-            <span class="option-icon">🔥</span>
             <span class="option-label">Warm</span>
           </div>
         </div>
@@ -117,15 +108,12 @@
       <!-- Bottom Center Buttons Container -->
       <div class="bottom-buttons-container">
         <button class="gm-button primary" id="drawRouteBtn">
-          <span>🗺️</span>
           <span>Draw Route</span>
         </button>
         <button class="gm-button secondary" id="clearRouteBtn">
-          <span>🗑️</span>
           <span>Clear Route</span>
         </button>
         <button class="gm-button secondary" id="toggleLocationBtn">
-          <span>📍</span>
           <span>Toggle Location</span>
         </button>
       </div>
