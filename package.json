@@ -1,0 +1,24 @@
+{
+  "name": "mapapp",
+  "version": "1.0.0",
+  "description": "An enhanced location mapping application with routing for different transport modes",
+  "main": "index.html",
+  "scripts": {
+    "dev": "http-server -p 8080",
+    "start": "http-server -p 8080",
+    "build": "node scripts/build-config.js",
+    "test": "echo 'No tests configured'"
+  },
+  "keywords": ["map", "leaflet", "routing", "mapbox", "location", "tracking"],
+  "author": "Aqualatic",
+  "license": "MIT",
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "http-server": "^14.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aqualatic/mapApp.git"
+  },
+  "homepage": "https://github.com/Aqualatic/mapApp#readme"
+}

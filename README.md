@@ -43,62 +43,22 @@ An improved version of the location mapping application with distinct routing fo
 
 ### Step 2: Configure Your API Key
 
-#### Option A: Direct Configuration (Recommended for this project)
-1. Open `config.js` in your project
-2. Replace the placeholder token with your actual Mapbox API key:
+**Local development**
 
-```javascript
-mapbox: {
-  accessToken: 'pk.YOUR_ACTUAL_MAPBOX_TOKEN_HERE',
-  // ... rest of config
-}
-```
-
-**Note:** `config.js` is already in `.gitignore`, so your API key won't be pushed to git. You can safely store your key here and easily modify it as needed.
-
-#### Option B: Environment Variable (Alternative)
-Set your API key as an environment variable:
-```bash
-# On Windows (Command Prompt)
-set MAPBOX_ACCESS_TOKEN=pk.YOUR_ACTUAL_MAPBOX_TOKEN_HERE
-
-# On Windows (PowerShell)
-$env:MAPBOX_ACCESS_TOKEN="pk.YOUR_ACTUAL_MAPBOX_TOKEN_HERE"
-
-# On macOS/Linux
-export MAPBOX_ACCESS_TOKEN=pk.YOUR_ACTUAL_MAPBOX_TOKEN_HERE
-```
-
-### Step 3: Keep Your API Key Secure
-✅ **DO**: 
-- Keep `config.js` in your `.gitignore` file (already configured)
-- Use environment variables in production
-- Never commit API keys to version control
-- Create a `.env.example` file to show required variables
-
-❌ **DON'T**:
-- Share your API key publicly
-- Commit `config.js` with real keys to GitHub
-- Use the same key across multiple projects
-- Store keys in client-side code without protection
-
-### Step 4: For Forkers - Setup Instructions
-
-If you're forking this project, follow these steps:
-
-1. **Create your own Mapbox account** and get a free API key
-2. **Modify config.js** (recommended approach):
-   - Open `config.js` in your forked project
-   - Replace the placeholder token with your own Mapbox API key
-   - Since `config.js` is in `.gitignore`, your key won't be pushed to your fork
-
-3. **Alternative: Environment Variable**:
-   ```bash
-   # Create a .env file in your project root
-   echo "MAPBOX_ACCESS_TOKEN=pk.YOUR_TOKEN_HERE" > .env
+1. Copy `.env.example` to `.env` in the project root.
+2. Add your Mapbox token to `.env`:
    ```
+   MAPBOX_ACCESS_TOKEN=pk.YOUR_ACTUAL_MAPBOX_TOKEN_HERE
+   ```
+3. Run `npm run build` to generate `config.js` from `.env`, then `npm run dev`.
 
-4. **Test your setup** by running the application and checking the browser console for any API errors
+**Vercel deployment**
+
+1. In the Vercel project: **Settings → Environment Variables**.
+2. Add `MAPBOX_ACCESS_TOKEN` with your Mapbox token.
+3. Redeploy. The build step will generate `config.js` from this variable.
+
+**Never commit `.env` or real API keys.** Use `.env.example` as a template only.
 
 ## 🛣️ How It Works
 
@@ -151,11 +111,13 @@ The system automatically validates routes to ensure they're distinct:
 mapApp/
 ├── index.html              # Main HTML file
 ├── app.js                  # Main application logic
-├── style.css               # Enhanced styling
-├── config.js               # API keys and configuration
-├── routing-service.js      # Enhanced routing logic
-├── .gitignore             # Prevents API keys from being committed
-└── README.md              # This file
+├── style.css               # Styling
+├── config.js               # Generated from MAPBOX_ACCESS_TOKEN (see .env.example)
+├── routing-service.js      # Routing logic
+├── scripts/build-config.js # Build script (writes config.js from env)
+├── .env.example            # Template for .env (copy to .env, add token)
+├── vercel.json             # Vercel config
+└── README.md
 ```
 
 ## 🔧 Technical Details
