@@ -1,5 +1,5 @@
 // Client-side configuration (generated - do not edit)
-// Built from MAPBOX_ACCESS_TOKEN env. Local: use .env and run npm run build
+// Built from mapbox_access_token env. Local: use .env and run npm run build
 
 const config = {
   mapbox: {

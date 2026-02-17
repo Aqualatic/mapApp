@@ -12,10 +12,10 @@ try {
   // dotenv optional
 }
 
-const token = process.env.MAPBOX_ACCESS_TOKEN || '';
+const token = process.env.mapbox_access_token || '';
 
 const configContent = `// Client-side configuration (generated - do not edit)
-// Built from MAPBOX_ACCESS_TOKEN env. Local: use .env and run npm run build
+// Built from mapbox_access_token env. Local: use .env and run npm run build
 
 const config = {
   mapbox: {
@@ -36,4 +36,4 @@ if (typeof module !== 'undefined' && module.exports) {
 
 const outPath = path.join(__dirname, '..', 'config.js');
 fs.writeFileSync(outPath, configContent, 'utf8');
-console.log('config.js written from MAPBOX_ACCESS_TOKEN');
+console.log('config.js written from mapbox_access_token');
