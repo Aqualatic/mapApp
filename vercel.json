@@ -1,16 +1,10 @@
 {
   "version": 2,
-  "name": "mapapp",
   "buildCommand": "npm run build",
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
+  "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/",
       "destination": "/index.html"
     }
   ],
