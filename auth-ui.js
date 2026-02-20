@@ -185,10 +185,13 @@
   // -------------------------------------------------------
   const svc = window.supabaseService;
   if (svc?.isReady) {
+    // Only listen for SIGNED_OUT — supabase-service.js blocks all other events
+    // (INITIAL_SESSION, TOKEN_REFRESHED, SIGNED_IN) so they can never trigger
+    // automatic marker loading regardless of what this callback does.
     svc.onAuthChange((_event, session) => {
       updateUIForUser(session?.user ?? null);
-      // DO NOT add any marker loading here. Ever.
     });
+    // Set initial UI state from the stored session on page load.
     svc.getSession().then(session => updateUIForUser(session?.user ?? null));
   }
 
