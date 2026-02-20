@@ -577,17 +577,6 @@ function addMarker(map, latlng, name, list = "default") {
   
   rebuildListUI();
 
-  // Auto-save new marker to Supabase (fire-and-forget, won't block the UI)
-  const svc = window.supabaseService;
-  if (svc?.isReady && svc.userId) {
-    svc.saveMarker({
-      name,
-      lat:          marker.getLatLng().lat,
-      lng:          marker.getLatLng().lng,
-      categoryName: list
-    }).catch(err => console.warn('[Supabase] Auto-save marker failed:', err.message));
-  }
-
   // Add subtle animation when marker is created (after positioning is correct)
   requestAnimationFrame(() => {
     setTimeout(() => {
@@ -1437,29 +1426,7 @@ window.loadMapDataFromSupabase = async function () {
   console.log('[Supabase] Map data loaded.');
 };
 
-// ------------------------------------------------------------------
-// AUTO-SAVE preferences when transport mode changes
-// ------------------------------------------------------------------
-(function patchTransportButtons() {
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.transport-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const svc = window.supabaseService;
-        if (!svc?.isReady || !svc.userId) return;
-        setTimeout(async () => {
-          try {
-            await svc.savePreferences({
-              mapStyle:      document.querySelector('.current-map-type')?.textContent || 'Default',
-              transportMode: state.currentTransportMode
-            });
-          } catch (err) {
-            console.warn('[Supabase] Auto-save failed:', err.message);
-          }
-        }, 150);
-      });
-    });
-  });
-})();
+
 
 // ===== MAP TYPES DROPDOWN FUNCTIONALITY =====
 
