@@ -1,3 +1,12 @@
+// ===== SUPABASE AUTH GUARD =====
+// Redirect to sign-in page if user is not authenticated
+(async () => {
+  const svc = window.supabaseService;
+  if (!svc?.isReady) return; // no Supabase config yet — allow access
+  const session = await svc.getSession();
+  if (!session) window.location.href = 'signin.html';
+})();
+
 // ===== CONSTANTS =====
 const DEFAULT_CENTER = [37.7749, -122.4194]; // San Francisco
 const DEFAULT_ZOOM = 13;
@@ -1319,6 +1328,127 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize map styles dropdown
   setupMapTypesDropdown(map);
 });
+
+// ===== SUPABASE INTEGRATION =====
+
+// ------------------------------------------------------------------
+// SAVE — pushes current markers, categories, active route, and
+//         map preferences up to Supabase for the signed-in user.
+// ------------------------------------------------------------------
+window.saveMapDataToSupabase = async function () {
+  const svc = window.supabaseService;
+  if (!svc?.isReady || !svc.userId) {
+    alert('Please sign in first to save your map data.');
+    return;
+  }
+
+  // 1. Save / sync all categories
+  const categoryNameToId = {};
+  for (const [catName] of state.lists) {
+    const cat = await svc.upsertCategory(catName);
+    categoryNameToId[catName] = cat.id;
+  }
+
+  // 2. Clear old markers and re-insert current ones
+  await svc.deleteAllMarkers();
+
+  for (const [leafletId, marker] of state.markers) {
+    const name    = state.markerNames.get(leafletId) || 'Unnamed';
+    const catName = marker.options.listId || 'default';
+    const latlng  = marker.getLatLng();
+    await svc.saveMarker({ name, lat: latlng.lat, lng: latlng.lng, categoryName: catName });
+  }
+
+  // 3. Save map preferences
+  const mapCenter  = window.mapInstance?.getCenter();
+  const mapZoom    = window.mapInstance?.getZoom() ?? 13;
+  const styleLabel = document.querySelector('.current-map-type')?.textContent || 'Default';
+
+  await svc.savePreferences({
+    mapStyle:      styleLabel,
+    transportMode: state.currentTransportMode,
+    defaultLat:    mapCenter?.lat ?? null,
+    defaultLng:    mapCenter?.lng ?? null,
+    defaultZoom:   mapZoom
+  });
+
+  console.log('[Supabase] Map data saved.');
+};
+
+// ------------------------------------------------------------------
+// LOAD — pulls markers, categories & preferences from Supabase
+//         and rebuilds the map.
+// ------------------------------------------------------------------
+window.loadMapDataFromSupabase = async function () {
+  const svc = window.supabaseService;
+  if (!svc?.isReady || !svc.userId) {
+    alert('Please sign in first to load your map data.');
+    return;
+  }
+  if (!window.mapInstance) return;
+
+  const map = window.mapInstance;
+
+  // Clear existing markers
+  for (const [, marker] of state.markers) marker.removeFrom(map);
+  state.markers.clear();
+  state.markerNames.clear();
+  state.lists.clear();
+
+  // Re-create markers from Supabase
+  const rows = await svc.getMarkers();
+  for (const row of rows) {
+    const catName = row.categories?.name || 'default';
+    addMarker(map, [row.lat, row.lng], row.name, catName);
+  }
+
+  // Restore preferences
+  try {
+    const prefs = await svc.getPreferences();
+    if (prefs) {
+      if (prefs.transport_mode) {
+        state.currentTransportMode = prefs.transport_mode;
+        updateTransportControls();
+      }
+      if (prefs.default_lat && prefs.default_lng) {
+        map.setView([prefs.default_lat, prefs.default_lng], prefs.default_zoom ?? 13);
+      }
+      if (prefs.map_style) {
+        const opt = document.querySelector(`.map-type-option[data-style="${CSS.escape(prefs.map_style)}"]`);
+        if (opt) opt.click();
+      }
+    }
+  } catch (err) {
+    console.warn('[Supabase] Could not load preferences:', err.message);
+  }
+
+  rebuildListUI();
+  console.log('[Supabase] Map data loaded.');
+};
+
+// ------------------------------------------------------------------
+// AUTO-SAVE preferences when transport mode changes
+// ------------------------------------------------------------------
+(function patchTransportButtons() {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.transport-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const svc = window.supabaseService;
+        if (!svc?.isReady || !svc.userId) return;
+        setTimeout(async () => {
+          try {
+            await svc.savePreferences({
+              mapStyle:      document.querySelector('.current-map-type')?.textContent || 'Default',
+              transportMode: state.currentTransportMode
+            });
+          } catch (err) {
+            console.warn('[Supabase] Auto-save failed:', err.message);
+          }
+        }, 150);
+      });
+    });
+  });
+})();
 
 // ===== MAP TYPES DROPDOWN FUNCTIONALITY =====
 

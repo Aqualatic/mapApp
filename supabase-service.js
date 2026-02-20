@@ -1,14 +1,13 @@
 // ============================================================
 // supabase-service.js
-// Drop into your project alongside app.js and routing-service.js
 // Handles all Supabase interactions: auth, markers, categories,
-// routes, and map preferences.
+// and map preferences. Routes are NOT stored — Mapbox redraws
+// them from markers on each session.
 //
 // SETUP:
-//   1. npm install @supabase/supabase-js
-//   2. Set SUPABASE_URL and SUPABASE_ANON_KEY in your .env
-//   3. Run build-config.js to inject them into config.js
-//   4. Load this file in index.html BEFORE app.js
+//   1. Set SUPABASE_URL and SUPABASE_ANON_KEY in your .env
+//   2. Run npm run build to inject them into config.js
+//   3. Load in index.html BEFORE app.js
 // ============================================================
 
 class SupabaseService {
@@ -20,12 +19,10 @@ class SupabaseService {
       return;
     }
 
-    // supabase-js is loaded as a CDN UMD bundle (see index.html)
     this.client = supabase.createClient(cfg.url, cfg.anonKey);
     this._session = null;
     this._authListeners = [];
 
-    // Keep local session in sync
     this.client.auth.onAuthStateChange((event, session) => {
       this._session = session;
       this._authListeners.forEach(fn => fn(event, session));
@@ -36,17 +33,9 @@ class SupabaseService {
   // INTERNAL HELPERS
   // ----------------------------------------------------------
 
-  get isReady() {
-    return !!this.client;
-  }
-
-  get user() {
-    return this._session?.user ?? null;
-  }
-
-  get userId() {
-    return this.user?.id ?? null;
-  }
+  get isReady()  { return !!this.client; }
+  get user()     { return this._session?.user ?? null; }
+  get userId()   { return this.user?.id ?? null; }
 
   _requireAuth() {
     if (!this.userId) throw new Error('Not authenticated');
@@ -105,14 +94,13 @@ class SupabaseService {
 
   async getPreferences() {
     this._requireAuth();
-    const data = await this._query(() =>
+    return this._query(() =>
       this.client
         .from('map_preferences')
         .select('*')
         .eq('user_id', this.userId)
         .single()
     );
-    return data;
   }
 
   async savePreferences({ mapStyle, transportMode, defaultLat, defaultLng, defaultZoom }) {
@@ -149,9 +137,6 @@ class SupabaseService {
     );
   }
 
-  /**
-   * Upsert a category by name. Returns the category row.
-   */
   async upsertCategory(name, color = '#ff453a') {
     this._requireAuth();
     return this._query(() =>
@@ -208,7 +193,6 @@ class SupabaseService {
   async saveMarker({ name, lat, lng, categoryName, notes = '' }) {
     this._requireAuth();
 
-    // Ensure category exists
     let categoryId = null;
     if (categoryName) {
       const cat = await this.upsertCategory(categoryName);
@@ -234,7 +218,6 @@ class SupabaseService {
   async updateMarker(markerId, updates) {
     this._requireAuth();
 
-    // If category name is being changed, resolve/create the category first
     if (updates.categoryName !== undefined) {
       if (updates.categoryName) {
         const cat = await this.upsertCategory(updates.categoryName);
@@ -267,92 +250,16 @@ class SupabaseService {
     );
   }
 
-  // ----------------------------------------------------------
-  // ROUTES
-  // ----------------------------------------------------------
-
-  async getRoutes() {
+  async deleteAllMarkers() {
     this._requireAuth();
     return this._query(() =>
       this.client
-        .from('routes')
-        .select('*, route_waypoints(*)')
-        .eq('user_id', this.userId)
-        .order('created_at', { ascending: false })
-    );
-  }
-
-  /**
-   * Save a route + its waypoints atomically.
-   *
-   * @param {Object} routeData
-   * @param {string}   routeData.name
-   * @param {string}   routeData.transportMode   'driving' | 'walking' | 'cycling'
-   * @param {number}   routeData.totalDistance   meters
-   * @param {number}   routeData.totalDuration   seconds
-   * @param {Array}    routeData.waypoints        [{ lat, lng, markerId?, label? }, ...]
-   *                   First element = start point, rest = intermediate/end stops.
-   */
-  async saveRoute({ name, transportMode, totalDistance, totalDuration, waypoints }) {
-    this._requireAuth();
-
-    // Insert route header
-    const route = await this._query(() =>
-      this.client
-        .from('routes')
-        .insert({
-          user_id:        this.userId,
-          name,
-          transport_mode: transportMode,
-          total_distance: totalDistance,
-          total_duration: totalDuration
-        })
-        .select()
-        .single()
-    );
-
-    // Insert waypoints
-    const waypointRows = waypoints.map((wp, i) => ({
-      route_id:  route.id,
-      position:  i,
-      lat:       wp.lat,
-      lng:       wp.lng,
-      marker_id: wp.markerId ?? null,
-      label:     wp.label ?? null
-    }));
-
-    await this._query(() =>
-      this.client.from('route_waypoints').insert(waypointRows)
-    );
-
-    return route;
-  }
-
-  async deleteRoute(routeId) {
-    this._requireAuth();
-    // Waypoints cascade-delete via FK
-    return this._query(() =>
-      this.client
-        .from('routes')
+        .from('markers')
         .delete()
-        .eq('id', routeId)
         .eq('user_id', this.userId)
-    );
-  }
-
-  async renameRoute(routeId, newName) {
-    this._requireAuth();
-    return this._query(() =>
-      this.client
-        .from('routes')
-        .update({ name: newName, updated_at: new Date().toISOString() })
-        .eq('id', routeId)
-        .eq('user_id', this.userId)
-        .select()
-        .single()
     );
   }
 }
 
-// Singleton — access anywhere as window.supabaseService
+// Singleton — accessible anywhere as window.supabaseService
 window.supabaseService = new SupabaseService();

@@ -15,7 +15,6 @@
   <!-- Leaflet Routing Machine CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
   
-  
   <!-- Custom styles -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -23,7 +22,7 @@
   <!-- Map Container -->
   <div id="map"></div>
 
-<!-- Google Maps-Style Left Panel -->
+  <!-- Google Maps-Style Left Panel -->
   <div class="left-panel">
     <!-- Categories Section -->
     <div class="categories-section">
@@ -34,7 +33,7 @@
     </div>
   </div>
 
-<!-- Google Maps-Style Right Panel -->
+  <!-- Google Maps-Style Right Panel -->
   <div class="right-panel">
     <!-- Transport Mode Section -->
     <div class="transport-section">
@@ -71,74 +70,82 @@
     </div>
   </div>
 
-      <!-- Map Styles Dropdown -->
-      <div class="map-styles-dropdown">
-        <button class="map-styles-toggle" id="mapTypesToggle" aria-expanded="false" aria-haspopup="listbox">
-          <span class="current-map-type">Default</span>
-          <span class="dropdown-arrow">▼</span>
-        </button>
-        <div class="map-styles-menu" id="mapTypesDropdown" role="listbox" aria-label="Map Styles">
-          <div class="map-type-option" data-style="Default" role="option" aria-selected="true">
-            <span class="option-label">Default</span>
-          </div>
-          <div class="map-type-option" data-style="Faded" role="option" aria-selected="false">
-            <span class="option-label">Faded</span>
-          </div>
-          <div class="map-type-option" data-style="Cool" role="option" aria-selected="false">
-            <span class="option-label">Cool</span>
-          </div>
-          <div class="map-type-option" data-style="Dark 2D" role="option" aria-selected="false">
-            <span class="option-label">Dark 2D</span>
-          </div>
-          <div class="map-type-option" data-style="Light 2D" role="option" aria-selected="false">
-            <span class="option-label">Light 2D</span>
-          </div>
-          <div class="map-type-option" data-style="Satellite" role="option" aria-selected="false">
-            <span class="option-label">Satellite</span>
-          </div>
-          <div class="map-type-option" data-style="Outdoors" role="option" aria-selected="false">
-            <span class="option-label">Outdoors</span>
-          </div>
-          <div class="map-type-option" data-style="Warm" role="option" aria-selected="false">
-            <span class="option-label">Warm</span>
-          </div>
-        </div>
+  <!-- Map Styles Dropdown -->
+  <div class="map-styles-dropdown">
+    <button class="map-styles-toggle" id="mapTypesToggle" aria-expanded="false" aria-haspopup="listbox">
+      <span class="current-map-type">Default</span>
+      <span class="dropdown-arrow">▼</span>
+    </button>
+    <div class="map-styles-menu" id="mapTypesDropdown" role="listbox" aria-label="Map Styles">
+      <div class="map-type-option" data-style="Default" role="option" aria-selected="true">
+        <span class="option-label">Default</span>
       </div>
-
-      <!-- Bottom Center Buttons Container -->
-      <div class="bottom-buttons-container">
-        <button class="gm-button primary" id="drawRouteBtn">
-          <span>Draw Route</span>
-        </button>
-        <button class="gm-button secondary" id="clearRouteBtn">
-          <span>Clear Route</span>
-        </button>
-        <button class="gm-button secondary" id="toggleLocationBtn">
-          <span>Toggle Location</span>
-        </button>
+      <div class="map-type-option" data-style="Faded" role="option" aria-selected="false">
+        <span class="option-label">Faded</span>
       </div>
-
-  <!-- Map Controls - Bottom Left -->
-  <div class="map-controls-bottom-left">
-    <!-- Zoom controls will be positioned here by Leaflet -->
+      <div class="map-type-option" data-style="Cool" role="option" aria-selected="false">
+        <span class="option-label">Cool</span>
+      </div>
+      <div class="map-type-option" data-style="Dark 2D" role="option" aria-selected="false">
+        <span class="option-label">Dark 2D</span>
+      </div>
+      <div class="map-type-option" data-style="Light 2D" role="option" aria-selected="false">
+        <span class="option-label">Light 2D</span>
+      </div>
+      <div class="map-type-option" data-style="Satellite" role="option" aria-selected="false">
+        <span class="option-label">Satellite</span>
+      </div>
+      <div class="map-type-option" data-style="Outdoors" role="option" aria-selected="false">
+        <span class="option-label">Outdoors</span>
+      </div>
+      <div class="map-type-option" data-style="Warm" role="option" aria-selected="false">
+        <span class="option-label">Warm</span>
+      </div>
+    </div>
   </div>
 
-  <!-- Map Controls - Bottom Right -->
-  <div class="map-controls-bottom-right">
-    <!-- Layer controls will be positioned here by Leaflet -->
+  <!-- Bottom Center Buttons Container -->
+  <div class="bottom-buttons-container">
+    <button class="gm-button primary" id="drawRouteBtn">
+      <span>Draw Route</span>
+    </button>
+    <button class="gm-button secondary" id="clearRouteBtn">
+      <span>Clear Route</span>
+    </button>
+    <button class="gm-button secondary" id="toggleLocationBtn">
+      <span>Toggle Location</span>
+    </button>
   </div>
 
-  <!-- Modal (injected by JavaScript) -->
+  <!-- Map Controls -->
+  <div class="map-controls-bottom-left"></div>
+  <div class="map-controls-bottom-right"></div>
 
-  <!-- Configuration and Routing Service -->
+  <!-- ═══════════════════════════════════════════════════
+       SCRIPTS — load order matters:
+       1. config.js         (credentials)
+       2. supabase CDN      (supabase-js UMD bundle)
+       3. supabase-service  (SupabaseService class + singleton)
+       4. auth-ui           (injects auth button/modal)
+       5. routing-service   (RoutingService class)
+       6. leaflet           (map library)
+       7. leaflet routing   (routing machine plugin)
+       8. app.js            (main app — runs last)
+  ═══════════════════════════════════════════════════ -->
   <script src="config.js"></script>
+
+  <!-- Supabase JS v2 (UMD bundle — exposes window.supabase) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+  <script src="supabase-service.js"></script>
+  <script src="auth-ui.js"></script>
   <script src="routing-service.js"></script>
-  
-  <!-- Scripts -->
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin=""></script>
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
   <script src="app.js"></script>
 </body>
 </html>
