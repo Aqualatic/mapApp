@@ -253,15 +253,18 @@
   if (svc?.isReady) {
     svc.onAuthChange((event, session) => {
       updateUIForUser(session?.user ?? null);
-      // Auto-load markers whenever a user signs in
-      if (event === 'SIGNED_IN' && typeof window.loadMapDataFromSupabase === 'function') {
+      // Only auto-load on actual new sign-in, not session restore on page load
+      if (event === 'SIGNED_IN' && !svc._sessionRestoredOnLoad && typeof window.loadMapDataFromSupabase === 'function') {
         window.loadMapDataFromSupabase().catch(err =>
           console.warn('[Supabase] Auto-load on sign-in failed:', err.message)
         );
       }
     });
-    // Check existing session on load
-    svc.getSession().then(session => updateUIForUser(session?.user ?? null));
+    // Check existing session on load — mark restore complete so auth listener won't auto-load
+    svc.getSession().then(session => {
+      svc._sessionRestoredOnLoad = true;
+      updateUIForUser(session?.user ?? null);
+    });
   }
 
   // ----------------------------------------------------------
