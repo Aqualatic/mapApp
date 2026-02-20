@@ -1378,14 +1378,28 @@ window.saveMapDataToSupabase = async function () {
 // ------------------------------------------------------------------
 // LOAD — pulls markers, categories & preferences from Supabase
 //         and rebuilds the map.
+// Guard prevents double-load if somehow called twice in quick
+// succession (e.g. button double-click).
 // ------------------------------------------------------------------
+window._supabaseLoadInProgress = false;
+
 window.loadMapDataFromSupabase = async function () {
+  if (window._supabaseLoadInProgress) {
+    console.warn('[Supabase] Load already in progress, skipping duplicate call.');
+    return;
+  }
+  window._supabaseLoadInProgress = true;
+
   const svc = window.supabaseService;
   if (!svc?.isReady || !svc.userId) {
+    window._supabaseLoadInProgress = false;
     alert('Please sign in first to load your map data.');
     return;
   }
-  if (!window.mapInstance) return;
+  if (!window.mapInstance) {
+    window._supabaseLoadInProgress = false;
+    return;
+  }
 
   const map = window.mapInstance;
 
@@ -1424,6 +1438,7 @@ window.loadMapDataFromSupabase = async function () {
 
   rebuildListUI();
   console.log('[Supabase] Map data loaded.');
+  window._supabaseLoadInProgress = false;
 };
 
 
