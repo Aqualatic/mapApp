@@ -27,16 +27,10 @@ class SupabaseService {
       // Always keep internal session up to date.
       this._session = session;
 
-      // STOP automatic marker loading.
-      // Supabase fires these events with NO user interaction:
-      //   INITIAL_SESSION - on every page load when a stored session exists
-      //   TOKEN_REFRESHED - every time you alt-tab or switch back to the tab
-      //   SIGNED_IN       - automatically when redirecting back from signin page
-      //
-      // Forwarding any of these to listeners is what causes markers to load
-      // or duplicate without the user pressing any button.
-      // We only forward SIGNED_OUT so the UI can react to explicit sign-out.
-      if (event === 'SIGNED_OUT') {
+      // Forward SIGNED_IN and SIGNED_OUT to listeners.
+      // TOKEN_REFRESHED and INITIAL_SESSION are still blocked to avoid
+      // duplicate loads when the tab regains focus or on every page load.
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
         this._authListeners.forEach(fn => fn(event, session));
       }
     });

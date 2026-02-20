@@ -576,6 +576,7 @@ function addMarker(map, latlng, name, list = "default") {
   state.lists.get(list).add(marker._leaflet_id);
   
   rebuildListUI();
+  triggerAutoSave();
 
   // Add subtle animation when marker is created (after positioning is correct)
   requestAnimationFrame(() => {
@@ -678,6 +679,7 @@ function deleteMarker(id) {
   if (state.lists.get(list)?.size === 0) state.lists.delete(list);
   
   rebuildListUI();
+  triggerAutoSave();
 }
 
 async function changeMarkerList(id) {
@@ -699,6 +701,7 @@ async function changeMarkerList(id) {
   marker.bindPopup(createMarkerPopup(id, state.markerNames.get(id), newList));
 
   rebuildListUI();
+  triggerAutoSave();
 }
 
 // ===== UI STATE MANAGEMENT =====
@@ -1296,13 +1299,35 @@ async function saveMapDataToSupabase() {
   console.log('[app] Saved', saves.length, 'markers to Supabase');
 }
 
+// Auto-save: called after any marker change. Silently skips if not signed in.
+let _autoSaveTimer = null;
+function triggerAutoSave() {
+  const svc = window.supabaseService;
+  if (!svc?.isReady || !svc.userId) return;
+
+  // Debounce: wait 1 second after the last change before saving,
+  // so rapid additions don't fire a save on every single click.
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = setTimeout(async () => {
+    if (typeof window.setAuthSyncStatus === 'function') window.setAuthSyncStatus('Saving…');
+    try {
+      await saveMapDataToSupabase();
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      if (typeof window.setAuthSyncStatus === 'function') window.setAuthSyncStatus(`Last saved at ${time}`);
+    } catch (err) {
+      console.warn('[app] Auto-save failed:', err);
+      if (typeof window.setAuthSyncStatus === 'function') window.setAuthSyncStatus('Save failed. Will retry on next change.');
+    }
+  }, 1000);
+}
+
 async function loadMapDataFromSupabase() {
   const svc = window.supabaseService;
   if (!svc?.isReady || !svc.userId) throw new Error('Not signed in');
 
   const rows = await svc.getMarkers();
   if (!rows || rows.length === 0) {
-    alert('No saved data found.');
+    console.log('[app] No saved markers found.');
     return;
   }
 

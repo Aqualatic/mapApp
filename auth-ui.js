@@ -39,9 +39,7 @@
           <h2 class="auth-title">My Account</h2>
           <p class="auth-user-email" id="authUserEmail"></p>
           <hr class="auth-divider" />
-          <button class="auth-action-btn" id="authSaveDataBtn">💾 Save Current Map Data</button>
-          <button class="auth-action-btn" id="authLoadDataBtn">📂 Load My Saved Data</button>
-          <button class="auth-action-btn danger" id="authClearDataBtn">🗑️ Clear Saved Data</button>
+          <p class="auth-sync-status" id="authSyncStatus">Markers sync automatically.</p>
           <hr class="auth-divider" />
           <button class="auth-signout-btn" id="authSignOutBtn">Sign Out</button>
         </div>
@@ -102,14 +100,7 @@
     .auth-submit:disabled { background: #555; cursor: not-allowed; }
     .auth-user-email { color: #aaa; font-size: 13px; margin: 0 0 16px; }
     .auth-divider { border: none; border-top: 1px solid #404040; margin: 14px 0; }
-    .auth-action-btn {
-      display: block; width: 100%; padding: 10px 14px; background: #3d3d3d;
-      border: 1px solid #505050; border-radius: 8px; color: #fff;
-      font-size: 13px; text-align: left; cursor: pointer; margin-bottom: 8px;
-    }
-    .auth-action-btn:hover { background: #505050; }
-    .auth-action-btn.danger { background: #3d1a1a; border-color: #6b2a2a; color: #ff6b6b; }
-    .auth-action-btn.danger:hover { background: #501a1a; }
+    .auth-sync-status { color: #aaa; font-size: 13px; margin: 0; }
     .auth-signout-btn {
       display: block; width: 100%; padding: 10px; background: #3d1a1a;
       border: 1px solid #6b2a2a; border-radius: 8px; color: #ff6b6b;
@@ -135,9 +126,7 @@
   const authSubmitBtn   = document.getElementById('authSubmitBtn');
   const tabSignIn       = document.getElementById('tabSignIn');
   const tabSignUp       = document.getElementById('tabSignUp');
-  const authSaveDataBtn = document.getElementById('authSaveDataBtn');
-  const authLoadDataBtn = document.getElementById('authLoadDataBtn');
-  const authClearDataBtn = document.getElementById('authClearDataBtn');
+  const authSyncStatus  = document.getElementById('authSyncStatus');
   const authSignOutBtn  = document.getElementById('authSignOutBtn');
 
   let currentTab = 'signin';
@@ -178,22 +167,29 @@
   }
 
   // -------------------------------------------------------
-  // Auth state listener — UI updates ONLY.
-  // The event type (_event) is intentionally ignored.
-  // SIGNED_IN, TOKEN_REFRESHED, INITIAL_SESSION — none of
-  // these should ever load or modify markers automatically.
+  // Auth state listener — UI updates + auto-load on sign-in.
+  // TOKEN_REFRESHED and INITIAL_SESSION are blocked in
+  // supabase-service.js so they never fire here.
   // -------------------------------------------------------
   const svc = window.supabaseService;
   if (svc?.isReady) {
-    // Only listen for SIGNED_OUT — supabase-service.js blocks all other events
-    // (INITIAL_SESSION, TOKEN_REFRESHED, SIGNED_IN) so they can never trigger
-    // automatic marker loading regardless of what this callback does.
-    svc.onAuthChange((_event, session) => {
+    svc.onAuthChange((event, session) => {
       updateUIForUser(session?.user ?? null);
+      // Auto-load markers when the user explicitly signs in
+      if (event === 'SIGNED_IN' && typeof window.loadMapDataFromSupabase === 'function') {
+        window.loadMapDataFromSupabase().catch(err => {
+          console.warn('[auth-ui] Auto-load on sign-in failed:', err);
+        });
+      }
     });
     // Set initial UI state from the stored session on page load.
     svc.getSession().then(session => updateUIForUser(session?.user ?? null));
   }
+
+  // Expose a function app.js can call to update the sync status text
+  window.setAuthSyncStatus = (msg) => {
+    if (authSyncStatus) authSyncStatus.textContent = msg;
+  };
 
   authButton.addEventListener('click', openModal);
   authModalClose.addEventListener('click', closeModal);
@@ -212,7 +208,6 @@
       } else {
         await svc.signIn(authEmail.value.trim(), authPassword.value);
         closeModal();
-        // Signing in does NOT load markers. User must click the button.
       }
     } catch (err) {
       showError(err.message || 'Something went wrong. Please try again.');
@@ -227,75 +222,5 @@
     closeModal();
   });
 
-  // -------------------------------------------------------
-  // SAVE — runs only on button click
-  // -------------------------------------------------------
-  authSaveDataBtn.addEventListener('click', async () => {
-    if (typeof window.saveMapDataToSupabase !== 'function') {
-      alert('Save function not available. Make sure app.js is loaded.');
-      return;
-    }
-    authSaveDataBtn.disabled = true;
-    authSaveDataBtn.textContent = '⏳ Saving…';
-    try {
-      await window.saveMapDataToSupabase();
-      authSaveDataBtn.textContent = '✅ Saved!';
-    } catch (err) {
-      authSaveDataBtn.textContent = '❌ Save failed';
-      console.error('[auth-ui] Save error:', err);
-    } finally {
-      authSaveDataBtn.disabled = false;
-      setTimeout(() => { authSaveDataBtn.textContent = '💾 Save Current Map Data'; }, 2500);
-    }
-  });
-
-  // -------------------------------------------------------
-  // LOAD — runs only on button click
-  // Guard prevents double-load if button clicked twice fast
-  // -------------------------------------------------------
-  let _loadInProgress = false;
-  authLoadDataBtn.addEventListener('click', async () => {
-    if (_loadInProgress) return;
-    if (typeof window.loadMapDataFromSupabase !== 'function') {
-      alert('Load function not available. Make sure app.js is loaded.');
-      return;
-    }
-    _loadInProgress = true;
-    authLoadDataBtn.disabled = true;
-    authLoadDataBtn.textContent = '⏳ Loading…';
-    try {
-      await window.loadMapDataFromSupabase();
-      authLoadDataBtn.textContent = '✅ Loaded!';
-      closeModal();
-    } catch (err) {
-      authLoadDataBtn.textContent = '❌ Load failed';
-      console.error('[auth-ui] Load error:', err);
-    } finally {
-      _loadInProgress = false;
-      authLoadDataBtn.disabled = false;
-      setTimeout(() => { authLoadDataBtn.textContent = '📂 Load My Saved Data'; }, 2500);
-    }
-  });
-
-  // -------------------------------------------------------
-  // CLEAR — wipes all marker rows in Supabase for this user.
-  // Use this to fix stale/duplicate data from older versions.
-  // -------------------------------------------------------
-  authClearDataBtn.addEventListener('click', async () => {
-    if (!confirm('This will permanently delete all your saved marker data from the server. Your current map markers will NOT be removed — only the server copy. Are you sure?')) return;
-    authClearDataBtn.disabled = true;
-    authClearDataBtn.textContent = '⏳ Clearing…';
-    try {
-      if (!svc?.isReady || !svc.userId) { alert('Please sign in first.'); return; }
-      await svc.deleteAllMarkers();
-      authClearDataBtn.textContent = '✅ Cleared!';
-    } catch (err) {
-      authClearDataBtn.textContent = '❌ Failed';
-      console.error('[auth-ui] Clear error:', err);
-    } finally {
-      authClearDataBtn.disabled = false;
-      setTimeout(() => { authClearDataBtn.textContent = '🗑️ Clear Saved Data'; }, 2500);
-    }
-  });
 
 })();
