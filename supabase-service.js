@@ -26,11 +26,10 @@ class SupabaseService {
     this.client.auth.onAuthStateChange((event, session) => {
       this._session = session;
 
-      // Only forward intentional auth events to listeners.
-      // TOKEN_REFRESHED and INITIAL_SESSION fire automatically on tab-switch
-      // or page load and must never trigger marker loading or other side-effects.
-      const USER_EVENTS = new Set(['SIGNED_IN', 'SIGNED_OUT', 'USER_UPDATED', 'PASSWORD_RECOVERY']);
-      if (USER_EVENTS.has(event)) {
+      // IMPORTANT: TOKEN_REFRESHED and INITIAL_SESSION fire automatically on every
+      // page load and tab-switch — they must NEVER trigger data loading.
+      // Only forward events that represent genuine user actions.
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED' || event === 'PASSWORD_RECOVERY') {
         this._authListeners.forEach(fn => fn(event, session));
       }
     });
