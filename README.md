@@ -1,144 +1,87 @@
 # Enhanced Location Mapper
 
-An improved version of the location mapping application with distinct routing for different transport modes.
+An improved implementation of the location mapping application featuring distinct routing logic for multiple transport modes, structured API integration, and enhanced user interface components.
 
-## 🚀 Key Improvements
+---
 
-### 1. **Distinct Routing for Each Transport Mode**
-- **Driving (🚗)**: Blue solid line routes optimized for vehicles
-- **Walking (🚶)**: Green dashed line routes using pedestrian paths
-- **Cycling (🚴)**: Yellow complex dashed pattern routes for bikes
+## Key Improvements
 
-### 2. **Enhanced API Integration**
-- **Primary**: Mapbox Directions API (best quality routing)
-- **Fallback**: OSRM (free but limited)
+### Distinct Routing Per Transport Mode
 
-### 3. **Smart Route Validation**
-- Detects when routes are too similar
-- Automatically tries alternative routing services
-- Provides visual and textual feedback
+Each transport mode is rendered with a visually distinct line style to ensure clear differentiation on the map canvas:
 
-### 4. **Turn-by-Turn Directions**
-- Complete step-by-step directions with instructions
-- Distance and time for each step
-- Transport mode-specific routing instructions
-- Professional directions panel with summary
+- **Driving**: Blue solid line (weight 5), optimized for vehicular routing via highways and major roads
+- **Walking**: Green dashed line (weight 4), constrained to pedestrian infrastructure and sidewalks
+- **Cycling**: Yellow complex dashed pattern (weight 4), prioritising bike lanes and low-traffic corridors
 
-### 5. **Improved User Interface**
-- Enhanced transport mode selection with icons
-- Real-time route information panel
-- Better visual distinction between route types
-- Fixed UI overlap issues with responsive design
+### API Integration
 
-## 🔑 Setting Up Mapbox API Key
+The application uses a tiered routing architecture:
 
-### Step 1: Get Your Free API Key
-1. Go to [Mapbox Account](https://account.mapbox.com/)
-2. Sign up for a free account (no credit card required)
-3. Navigate to "Tokens" in your account dashboard
-4. Click "Create a token"
-5. Name your token (e.g., "Location Mapper")
-6. Ensure "Directions" permissions are enabled
-7. Copy the generated token
-
-### Step 2: Configure Your API Key
-
-**Local development**
-
-1. Copy `.env.example` to `.env` in the project root.
-2. Add your Mapbox token to `.env`:
-   ```
-   MAPBOX_ACCESS_TOKEN=pk.YOUR_ACTUAL_MAPBOX_TOKEN_HERE
-   ```
-3. Run `npm run build` to generate `config.js` from `.env`, then `npm run dev`.
-
-**Vercel deployment**
-
-1. In the Vercel project: **Settings → Environment Variables**.
-2. Add `MAPBOX_ACCESS_TOKEN` with your Mapbox token.
-3. Redeploy. The build step will generate `config.js` from this variable.
-
-**Never commit `.env` or real API keys.** Use `.env.example` as a template only.
-
-## 🛣️ How It Works
-
-### Transport Mode Differences
-
-**Driving Routes:**
-- Use highways and major roads
-- Avoid pedestrian-only areas
-- Optimize for speed and vehicle accessibility
-- Blue solid line with weight 5
-
-**Walking Routes:**
-- Use sidewalks, pedestrian paths, and walkways
-- Avoid highways and vehicle-only roads
-- May take longer but safer for pedestrians
-- Green dashed line with weight 4
-
-**Cycling Routes:**
-- Use bike lanes and bike-friendly roads
-- Avoid heavy traffic areas when possible
-- Balance between safety and efficiency
-- Yellow complex dashed pattern
+- **Primary**: Mapbox Directions API — high-quality, mode-aware routing with reliable response times
+- **Fallback**: OSRM — open-source, freely available, with more limited pedestrian data
 
 ### Route Validation
 
-The system automatically validates routes to ensure they're distinct:
+The system performs automatic validation to detect routing similarity across modes. If two computed routes exceed an 85% similarity threshold, the application activates its fallback routing service and provides visual feedback to the user.
 
-1. **Similarity Check**: Compares start/end points of new routes with existing ones
-2. **Fallback Activation**: If routes are too similar (>85% similarity), tries alternative services
-3. **Visual Feedback**: Shows route information panel with mode indicators
-4. **Error Handling**: Graceful fallback with user-friendly error messages
+### Turn-by-Turn Directions
 
-## 🎯 Usage
+The directions panel renders step-by-step navigation instructions with per-step distance, duration, and mode-specific guidance, presented in a structured summary panel.
 
-### Basic Usage
-1. Click on the map to add locations
-2. Use the search bar to find specific addresses
-3. Click "Draw Route" to create a route between all visible markers
-4. Use the transport mode buttons to switch between driving, walking, and cycling
+### User Interface
 
-### Advanced Features
-- **Route Information Panel**: Shows distance, time, and transport mode
-- **Transport Mode Switching**: Change routing mode without redrawing
-- **Route Validation**: Automatic detection of similar routes
-- **Error Recovery**: Fallback to alternative routing services
+Improvements include a responsive transport mode selector, a real-time route information panel, resolution of previous UI overlap issues, and clear visual distinction between route types.
 
-## 📁 Project Structure
+---
 
-```
-mapApp/
-├── index.html              # Main HTML file
-├── app.js                  # Main application logic
-├── style.css               # Styling
-├── config.js               # Generated from MAPBOX_ACCESS_TOKEN (see .env.example)
-├── routing-service.js      # Routing logic
-├── scripts/build-config.js # Build script (writes config.js from env)
-├── .env.example            # Template for .env (copy to .env, add token)
-├── vercel.json             # Vercel config
-└── README.md
-```
+## Mapbox API Key Configuration
 
-## 🔧 Technical Details
+### Obtaining an API Key
 
-### Routing Service Priority
-1. **Mapbox Directions API** (Primary)
-   - Best pedestrian and cycling data
-   - Reliable and fast
-   - Requires API key
+1. Register for a free account at [https://account.mapbox.com/](https://account.mapbox.com/) (no payment method required)
+2. Navigate to the **Tokens** section of the account dashboard
+3. Select **Create a token**, assign a descriptive name (e.g., "Location Mapper"), and confirm that Directions API permissions are enabled
+4. Copy the generated token, which will begin with the prefix `pk.`
 
-2. **OSRM** (Fallback)
-   - Free and open-source
-   - Limited pedestrian data
-   - May produce similar routes
+### Local Development
 
-3. **OpenRouteService** (Future)
-   - Excellent routing quality
-   - Requires separate API key
-   - Ready for integration
+1. Copy `.env.example` to `.env` in the project root
+2. Insert your token:
+   ```
+   MAPBOX_ACCESS_TOKEN=pk.YOUR_ACTUAL_MAPBOX_TOKEN_HERE
+   ```
+3. Run `npm run build` to generate `config.js` from the environment file, then start the development server with `npm run dev`
 
-### Route Styling Configuration
+### Vercel Deployment
+
+1. In the Vercel project dashboard, navigate to **Settings > Environment Variables**
+2. Add the variable `MAPBOX_ACCESS_TOKEN` with your Mapbox token as the value
+3. Redeploy the project; the build step will generate `config.js` from this variable automatically
+
+**Important:** Do not commit `.env` or any file containing real API credentials to version control. Use `.env.example` as a template only.
+
+---
+
+## Technical Architecture
+
+### Transport Mode Routing Behaviour
+
+**Driving routes** utilise highways and arterial roads, avoid pedestrian-only infrastructure, and optimise for vehicle accessibility and travel time.
+
+**Walking routes** are restricted to sidewalks, pedestrian paths, and designated walkways, avoiding motorway and vehicle-exclusive segments.
+
+**Cycling routes** prefer dedicated cycling infrastructure and low-traffic roads, balancing safety considerations against routing efficiency.
+
+### Route Validation Logic
+
+1. **Similarity Check**: Compares the start and end coordinates of newly computed routes against existing routes
+2. **Fallback Activation**: If similarity exceeds the configured threshold (default: 85%), the system requests a route from an alternative service
+3. **Visual Feedback**: The route information panel updates to reflect the active transport mode and data source
+4. **Error Handling**: Errors are surfaced as user-facing alerts with automatic dismissal; routing degrades gracefully to available services
+
+### Route Style Configuration
+
 ```javascript
 routeStyles: {
   driving: {
@@ -162,54 +105,45 @@ routeStyles: {
 }
 ```
 
-## 🚨 Troubleshooting
+## Project Structure
 
-### Common Issues
+```
+mapApp/
+├── index.html              # Main HTML entry point
+├── app.js                  # Core application logic
+├── style.css               # Stylesheet
+├── config.js               # Generated from MAPBOX_ACCESS_TOKEN (see .env.example)
+├── routing-service.js      # Routing logic and service integration
+├── scripts/build-config.js # Build script: generates config.js from environment
+├── .env.example            # Template for .env (copy locally; do not commit credentials)
+├── vercel.json             # Vercel deployment configuration
+└── README.md
+```
 
-**"No routing services available"**
-- Check your Mapbox API key in `config.js`
-- Ensure internet connection
-- Verify API key has Directions permissions
+### Basic Operation
 
-**Routes still look similar**
-- Mapbox API key not configured (falling back to OSRM)
-- Try different start/end points
-- Check route validation settings in config
+1. Click on the map canvas to place location markers
+2. Use the search bar to resolve specific addresses to coordinates
+3. Select **Draw Route** to compute a route across all visible markers
+4. Use the transport mode controls to switch between driving, walking, and cycling without redrawing markers
 
-**API key errors**
-- Verify key format (starts with 'pk.')
-- Check account status and billing
-- Ensure Directions API is enabled
+### Routing Service Priority
 
-### Getting Help
-1. Check browser console for error messages
-2. Verify API key configuration
-3. Test with simple routes first
-4. Check Mapbox account for usage limits
-
-## 📈 Performance Notes
-
-- **Mapbox API**: Fast response times, excellent data quality
-- **OSRM Fallback**: May be slower, limited data
-- **Route Caching**: Routes are cached to reduce API calls
-- **Error Handling**: Graceful degradation when services fail
-
-## 🎨 Visual Improvements
-
-- **Enhanced Route Panel**: Shows real-time route information
-- **Transport Mode Indicators**: Clear visual distinction between modes
-- **Route Markers**: Start and end point markers with mode-specific colors
-- **Error Alerts**: User-friendly error messages with auto-dismissal
-- **Responsive Design**: Works on desktop and mobile devices
-
-## 🔄 Future Enhancements
-
-- [ ] OpenRouteService integration
-- [ ] Route optimization algorithms
-- [ ] Multi-stop route planning
-- [ ] Traffic-aware routing
-- [ ] Offline routing capabilities
+| Priority | Service | Notes |
+|----------|---------|-------|
+| 1 | Mapbox Directions API | Primary; best pedestrian and cycling data; requires API key |
+| 2 | OSRM | Fallback; free and open-source; limited pedestrian differentiation |
+| 3 | OpenRouteService | Planned; excellent routing quality; requires separate API key |
 
 ---
 
-**Note**: This enhanced version provides significantly better routing differentiation compared to the original implementation that used only OSRM routing.
+## Performance Notes
+
+- **Mapbox API**: Low-latency responses with high-quality routing data
+- **OSRM Fallback**: Higher latency; limited modal differentiation
+- **Route Caching**: Computed routes are cached to minimise redundant API calls
+- **Graceful Degradation**: The application remains functional when routing services are partially unavailable
+
+---
+
+**Note:** This enhanced implementation provides substantially improved routing differentiation across transport modes compared to the original single-service implementation relying solely on OSRM.
