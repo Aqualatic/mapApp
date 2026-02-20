@@ -1272,6 +1272,55 @@ function setupEventHandlers(map) {
   };
 }
 
+// ===== SUPABASE SAVE / LOAD =====
+// These run ONLY when the user clicks the buttons in the account panel.
+// Nothing calls these automatically.
+
+async function saveMapDataToSupabase() {
+  const svc = window.supabaseService;
+  if (!svc?.isReady || !svc.userId) throw new Error('Not signed in');
+
+  // Wipe the server copy first so we never get duplicates from old data.
+  await svc.deleteAllMarkers();
+
+  // Save every marker that is currently on the map.
+  const saves = [];
+  state.markers.forEach((marker, id) => {
+    const latlng = marker.getLatLng();
+    const name   = state.markerNames.get(id) || 'Unnamed';
+    const list   = marker.options.listId || 'default';
+    saves.push(svc.saveMarker({ name, lat: latlng.lat, lng: latlng.lng, categoryName: list }));
+  });
+
+  await Promise.all(saves);
+  console.log('[app] Saved', saves.length, 'markers to Supabase');
+}
+
+async function loadMapDataFromSupabase() {
+  const svc = window.supabaseService;
+  if (!svc?.isReady || !svc.userId) throw new Error('Not signed in');
+
+  const rows = await svc.getMarkers();
+  if (!rows || rows.length === 0) {
+    alert('No saved data found.');
+    return;
+  }
+
+  // Clear everything currently on the map before loading.
+  state.markers.forEach(marker => marker.removeFrom(window.mapInstance));
+  state.markers.clear();
+  state.markerNames.clear();
+  state.lists.clear();
+
+  // Add each saved marker back onto the map.
+  rows.forEach(row => {
+    const categoryName = row.categories?.name || 'default';
+    addMarker(window.mapInstance, [row.lat, row.lng], row.name, categoryName);
+  });
+
+  console.log('[app] Loaded', rows.length, 'markers from Supabase');
+}
+
 // ===== INITIALIZATION =====
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1324,6 +1373,10 @@ document.addEventListener('DOMContentLoaded', () => {
   window.changeMarkerList = changeMarkerList;
   window.closePopup = closePopup;
   window.addMarkerToRoute = addMarkerToRoute;
+
+  // Expose save/load functions for the auth-ui buttons
+  window.saveMapDataToSupabase = saveMapDataToSupabase;
+  window.loadMapDataFromSupabase = loadMapDataFromSupabase;
 
   // Initialize map styles dropdown
   setupMapTypesDropdown(map);
