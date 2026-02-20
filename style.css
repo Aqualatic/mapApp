@@ -133,7 +133,7 @@ html, body {
 .right-panel {
   position: absolute;
   right: calc(20px + var(--safe-right));
-  top: calc(20px + var(--safe-top));
+  top: calc(72px + var(--safe-top));
   width: min(350px, calc(100vw - 40px - var(--safe-left) - var(--safe-right)));
   max-width: 100%;
   background: var(--glass-bg);
@@ -145,7 +145,7 @@ html, body {
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  max-height: min(80vh, calc(100dvh - 40px - var(--safe-top) - var(--safe-bottom)));
+  max-height: min(80vh, calc(100dvh - 92px - var(--safe-top) - var(--safe-bottom)));
   animation: slideInRight 0.3s ease;
 }
 

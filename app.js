@@ -576,7 +576,18 @@ function addMarker(map, latlng, name, list = "default") {
   state.lists.get(list).add(marker._leaflet_id);
   
   rebuildListUI();
-  
+
+  // Auto-save new marker to Supabase (fire-and-forget, won't block the UI)
+  const svc = window.supabaseService;
+  if (svc?.isReady && svc.userId) {
+    svc.saveMarker({
+      name,
+      lat:          marker.getLatLng().lat,
+      lng:          marker.getLatLng().lng,
+      categoryName: list
+    }).catch(err => console.warn('[Supabase] Auto-save marker failed:', err.message));
+  }
+
   // Add subtle animation when marker is created (after positioning is correct)
   requestAnimationFrame(() => {
     setTimeout(() => {

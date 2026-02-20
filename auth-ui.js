@@ -253,6 +253,12 @@
   if (svc?.isReady) {
     svc.onAuthChange((event, session) => {
       updateUIForUser(session?.user ?? null);
+      // Auto-load markers whenever a user signs in
+      if (event === 'SIGNED_IN' && typeof window.loadMapDataFromSupabase === 'function') {
+        window.loadMapDataFromSupabase().catch(err =>
+          console.warn('[Supabase] Auto-load on sign-in failed:', err.message)
+        );
+      }
     });
     // Check existing session on load
     svc.getSession().then(session => updateUIForUser(session?.user ?? null));
