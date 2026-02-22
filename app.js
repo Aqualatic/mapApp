@@ -572,13 +572,13 @@ function addMarker(map, latlng, name, list = "default", poiFeature = null) {
   // Store POI feature data on the marker if available
   if (poiFeature) {
     marker._poiFeature = poiFeature;
-    // Bind a POI popup that reopens the same info panel
+    // Bind a POI popup that shows the same info as before saving, plus marker action buttons
     const lat = Array.isArray(latlng) ? latlng[0] : latlng.lat;
     const lng = Array.isArray(latlng) ? latlng[1] : latlng.lng;
-    const popupHTML = poiFeature.properties?.feature_type === 'poi'
+    const poiHTML = poiFeature.properties?.feature_type === 'poi'
       ? window.poiService.buildPOIPopupHTML(poiFeature, lat, lng)
       : window.poiService.buildAddressPopupHTML(poiFeature, lat, lng);
-    marker.bindPopup(popupHTML, {
+    marker.bindPopup(buildSavedMarkerPopup(marker._leaflet_id, name, list, poiHTML), {
       maxWidth: 420,
       minWidth: 280,
       className: 'poi-popup',
@@ -673,14 +673,38 @@ function createMarkerPopup(id, name, list) {
         <button class="popup-action-btn delete-btn" onclick="deleteMarker(${id})" title="Delete this location">
           <span class="btn-text">Delete</span>
         </button>
-        
         <button class="popup-action-btn edit-btn" onclick="changeMarkerList(${id})" title="Change category">
           <span class="btn-text">Edit Category</span>
+        </button>
+        <button class="popup-action-btn rename-btn" onclick="renameMarker(${id})" title="Rename this location">
+          <span class="btn-text">Rename</span>
         </button>
       </div>
       
       <div class="marker-popup-footer">
         <button class="popup-close-btn" onclick="closePopup()">Close</button>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Wrap POI popup HTML with saved-marker action buttons at the bottom.
+ * Used when clicking a saved marker that has POI data attached.
+ */
+function buildSavedMarkerPopup(id, name, list, poiHTML) {
+  return `
+    <div class="saved-poi-popup-wrapper">
+      <div class="saved-poi-name-bar">
+        <span class="saved-poi-saved-label">Saved as:</span>
+        <strong class="saved-poi-saved-name">${escapeHtml(name)}</strong>
+        <span class="saved-poi-category-tag">${escapeHtml(list)}</span>
+      </div>
+      ${poiHTML}
+      <div class="saved-poi-actions">
+        <button class="popup-action-btn rename-btn" onclick="renameMarker(${id})" title="Rename this location">Rename</button>
+        <button class="popup-action-btn edit-btn" onclick="changeMarkerList(${id})" title="Change category">Edit Category</button>
+        <button class="popup-action-btn delete-btn" onclick="deleteMarker(${id})" title="Remove marker">Delete</button>
       </div>
     </div>
   `;
@@ -750,6 +774,32 @@ async function changeMarkerList(id) {
   marker.bindPopup(createMarkerPopup(id, state.markerNames.get(id), newList));
 
   rebuildListUI();
+  triggerAutoSave();
+}
+
+async function renameMarker(id) {
+  const marker = state.markers.get(id);
+  if (!marker) return;
+
+  const currentName = state.markerNames.get(id) || '';
+  const newName = await customPrompt('Rename Location', 'Enter a new name', currentName);
+  if (!newName || newName === currentName) return;
+
+  state.markerNames.set(id, newName);
+
+  // Rebind the popup — use POI popup if the marker has POI data, else the plain popup
+  if (marker._poiFeature) {
+    const latlng = marker.getLatLng();
+    const poiHTML = marker._poiFeature.properties?.feature_type === 'poi'
+      ? window.poiService.buildPOIPopupHTML(marker._poiFeature, latlng.lat, latlng.lng)
+      : window.poiService.buildAddressPopupHTML(marker._poiFeature, latlng.lat, latlng.lng);
+    marker.bindPopup(buildSavedMarkerPopup(id, newName, marker.options.listId, poiHTML), {
+      maxWidth: 420, minWidth: 280, className: 'poi-popup', autoPanPadding: [40, 40]
+    });
+  } else {
+    marker.bindPopup(createMarkerPopup(id, newName, marker.options.listId));
+  }
+
   triggerAutoSave();
 }
 
@@ -1464,6 +1514,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.closePopup = closePopup;
   window.addMarkerToRoute = addMarkerToRoute;
   window.savePOIAsMarker = savePOIAsMarker;
+  window.renameMarker = renameMarker;
 
   // Expose save/load functions for the auth-ui buttons
   window.saveMapDataToSupabase = saveMapDataToSupabase;

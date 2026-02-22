@@ -1931,7 +1931,7 @@ body {
 
 .marker-popup-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: var(--space-xs);
   margin-bottom: var(--space-sm);
 }
@@ -1979,13 +1979,62 @@ body {
   color: #ff9f9f;
 }
 
-.edit-btn:hover {
-  background: rgba(92, 107, 192, 0.1);
-  border-color: #5c6bc0;
-  color: #a4b0ff;
+.rename-btn:hover {
+  background: rgba(10, 132, 255, 0.1);
+  border-color: #0a84ff;
+  color: #5ac8fa;
 }
 
-.marker-popup-footer {
+/* Saved POI popup wrapper — shown when clicking a saved marker that has POI data */
+.saved-poi-popup-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.saved-poi-name-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(10, 132, 255, 0.08);
+  border: 1px solid rgba(10, 132, 255, 0.25);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.saved-poi-saved-label {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.saved-poi-saved-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.saved-poi-category-tag {
+  font-size: 11px;
+  background: rgba(10, 132, 255, 0.2);
+  color: #5ac8fa;
+  border: 1px solid rgba(10, 132, 255, 0.3);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+
+.saved-poi-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--direction-border);
+}
+
+
   display: flex;
   justify-content: flex-end;
   padding-top: 8px;
@@ -2014,8 +2063,9 @@ body {
 }
 
 @media (max-width: 380px) {
-  .marker-popup-actions {
-    grid-template-columns: 1fr;
+  .marker-popup-actions,
+  .saved-poi-actions {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
