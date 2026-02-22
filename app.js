@@ -18,21 +18,21 @@ const MAX_WAYPOINTS = 10;
 
 function applyDarkTheme() {
   const root = document.documentElement;
-  
+
   // Apply dark theme by setting data attribute
   root.setAttribute('data-theme', 'dark');
-  
+
   // Update all UI elements to use dark theme colors
   updateAllUIElements('dark');
-  
+
   // Update marker colors
   updateMarkerColors('dark');
-  
+
   // Update route colors if route exists
   if (state.currentRoute) {
     updateRouteColors('dark');
   }
-  
+
   // Update layer control styling
   updateLayerControlStyling('dark');
 }
@@ -47,7 +47,7 @@ function updateAllUIElements() {
       panel.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.4)';
     }
   });
-  
+
   // Update all buttons (but don't override transport button styles - let CSS handle it)
   const buttons = document.querySelectorAll('.gm-button, .btn');
   buttons.forEach(btn => {
@@ -57,10 +57,10 @@ function updateAllUIElements() {
       btn.style.color = '#cccccc';
     }
   });
-  
+
   // Don't apply inline styles to transport buttons - let CSS classes handle styling
   // The active class will be managed by updateTransportControls()
-  
+
   // Update headings and labels
   const headings = document.querySelectorAll('h3, h4, .transport-header');
   headings.forEach(heading => {
@@ -68,7 +68,7 @@ function updateAllUIElements() {
       heading.style.color = '#ffffff';
     }
   });
-  
+
   // Update text content
   const textElements = document.querySelectorAll('label, .empty-state, .no-directions, .note, .step-instruction, .step-details, .summary-label, .summary-value');
   textElements.forEach(el => {
@@ -76,7 +76,7 @@ function updateAllUIElements() {
       el.style.color = '#ffffff';
     }
   });
-  
+
   // Update list items
   const listItems = document.querySelectorAll('.list-item');
   listItems.forEach(item => {
@@ -85,47 +85,47 @@ function updateAllUIElements() {
       item.style.borderColor = '#505050';
     }
   });
-  
+
   // Update route info panel
   const routeInfoPanel = document.querySelector('.route-info-panel');
   if (routeInfoPanel) {
     routeInfoPanel.style.background = '#2d2d2d';
     routeInfoPanel.style.borderColor = '#404040';
   }
-  
+
   // Update directions section
   const directionsSection = document.querySelector('.directions-section');
   if (directionsSection) {
     directionsSection.style.background = '#2d2d2d';
     directionsSection.style.borderColor = '#404040';
-    
+
     // Also update the directions header
     const directionsHeader = directionsSection.querySelector('.directions-header-inline');
     if (directionsHeader) {
       directionsHeader.style.background = '#3d3d3d';
       directionsHeader.style.borderColor = '#505050';
-      
+
       const headerText = directionsHeader.querySelector('h4');
       if (headerText) {
         headerText.style.color = '#ffffff';
       }
     }
   }
-  
+
   // Update direction steps
   const directionSteps = document.querySelectorAll('.direction-step');
   directionSteps.forEach(step => {
     if (step) {
       step.style.background = '#3d3d3d';
       step.style.borderColor = '#505050';
-      
+
       // Update step number background
       const stepNumber = step.querySelector('.step-number');
       if (stepNumber) {
         stepNumber.style.background = '#0a84ff';
         stepNumber.style.color = '#ffffff';
       }
-      
+
       // Update step content text
       const stepContent = step.querySelector('.step-content');
       if (stepContent) {
@@ -133,17 +133,17 @@ function updateAllUIElements() {
         if (stepInstruction) {
           stepInstruction.style.color = '#ffffff';
         }
-        
+
         const stepDetails = stepContent.querySelector('.step-details');
         if (stepDetails) {
           stepDetails.style.color = '#cccccc';
-          
+
           const stepDistance = stepDetails.querySelector('.step-distance');
           if (stepDistance) {
             stepDistance.style.color = '#0a84ff';
           }
         }
-        
+
         // Update marker proximity styling
         const markerProximity = stepContent.querySelector('.marker-proximity');
         if (markerProximity) {
@@ -154,7 +154,7 @@ function updateAllUIElements() {
       }
     }
   });
-  
+
   // Update summary items
   const summaryItems = document.querySelectorAll('.summary-item');
   summaryItems.forEach(item => {
@@ -163,24 +163,24 @@ function updateAllUIElements() {
       item.style.borderColor = '#505050';
     }
   });
-  
+
   // Update modal styles
   const modalContent = document.querySelector('.modal-content');
   if (modalContent) {
     modalContent.style.background = '#2d2d2d';
     modalContent.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.6)';
   }
-  
+
   const modalInput = document.querySelector('.modal-content input');
   if (modalInput) {
     modalInput.style.background = '#3d3d3d';
     modalInput.style.borderColor = '#505050';
     modalInput.style.color = '#ffffff';
   }
-  
+
   // Update layer control if it exists
   updateLayerControlStyling('dark');
-  
+
   // Update any other elements that might have inline styles
   const inlineStyledElements = document.querySelectorAll('[style*="background"], [style*="color"], [style*="border"]');
   inlineStyledElements.forEach(el => {
@@ -189,7 +189,7 @@ function updateAllUIElements() {
       const currentStyle = el.getAttribute('style');
       if (currentStyle) {
         let newStyle = currentStyle;
-        
+
         // Update background colors
         if (newStyle.includes('background: #f8f9fa')) {
           newStyle = newStyle.replace('background: #f8f9fa', 'background: #3d3d3d');
@@ -202,7 +202,7 @@ function updateAllUIElements() {
         } else if (newStyle.includes('background: #fff3e0')) {
           newStyle = newStyle.replace('background: #fff3e0', 'background: #5d4000');
         }
-        
+
         // Update text colors
         if (newStyle.includes('color: #333')) {
           newStyle = newStyle.replace('color: #333', 'color: #cccccc');
@@ -211,14 +211,14 @@ function updateAllUIElements() {
         } else if (newStyle.includes('color: #888')) {
           newStyle = newStyle.replace('color: #888', 'color: #999999');
         }
-        
+
         // Update border colors
         if (newStyle.includes('border: 1px solid #e0e0e0')) {
           newStyle = newStyle.replace('border: 1px solid #e0e0e0', 'border: 1px solid #404040');
         } else if (newStyle.includes('border: 1px solid #c6c6c6')) {
           newStyle = newStyle.replace('border: 1px solid #c6c6c6', 'border: 1px solid #505050');
         }
-        
+
         if (newStyle !== currentStyle) {
           el.setAttribute('style', newStyle);
         }
@@ -241,7 +241,7 @@ function updateMarkerColors() {
 
 function updateRouteColors() {
   if (!state.currentRoute || !state.routingService) return;
-  
+
   const routeColor = '#0a84ff';
   state.routingService.updateRouteColor(routeColor);
 }
@@ -252,7 +252,7 @@ function updateLayerControlStyling() {
     layerControlContainer.style.background = 'rgba(45, 45, 45, 0.9)';
     layerControlContainer.style.border = '1px solid #404040';
     layerControlContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
-    
+
     // Update layer names styling
     const layerNames = layerControlContainer.querySelectorAll('.leaflet-control-layers-list label');
     layerNames.forEach(label => {
@@ -314,14 +314,14 @@ function customPrompt(title, placeholder = '', defaultValue = '') {
     const input = document.getElementById('modalInput');
     const okBtn = document.getElementById('modalOk');
     const cancelBtn = document.getElementById('modalCancel');
-    
+
     titleEl.textContent = title;
     input.placeholder = placeholder;
     input.value = defaultValue;
     modal.classList.add('active');
     input.focus();
     input.select();
-    
+
     const cleanup = () => {
       modal.classList.remove('active');
       okBtn.onclick = null;
@@ -329,26 +329,26 @@ function customPrompt(title, placeholder = '', defaultValue = '') {
       input.onkeydown = null;
       modal.onclick = null;
     };
-    
+
     const handleSubmit = () => {
       const value = input.value.trim();
       cleanup();
       resolve(value || null);
     };
-    
+
     const handleCancel = () => {
       cleanup();
       resolve(null);
     };
-    
+
     okBtn.onclick = handleSubmit;
     cancelBtn.onclick = handleCancel;
-    
+
     input.onkeydown = (e) => {
       if (e.key === 'Enter') handleSubmit();
       else if (e.key === 'Escape') handleCancel();
     };
-    
+
     modal.onclick = (e) => {
       if (e.target === modal) handleCancel();
     };
@@ -380,7 +380,7 @@ function initializeMap() {
 
 function addMapLayers(map) {
   const config = window.config || config;
-  
+
   // Mapbox styles - requires Mapbox access token
   const mapboxStyles = {
     "Default": L.tileLayer(
@@ -448,17 +448,17 @@ function addMapLayers(map) {
   };
 
   // Use Mapbox styles if access token is available, otherwise use fallbacks
-  const baseLayers = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE' 
-    ? mapboxStyles 
+  const baseLayers = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE'
+    ? mapboxStyles
     : fallbackStyles;
 
   // Add default layer
-  const defaultLayer = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE' 
-    ? baseLayers["Default"] 
+  const defaultLayer = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE'
+    ? baseLayers["Default"]
     : baseLayers["Street Map"];
 
   defaultLayer.addTo(map);
-  
+
   // Zoom control: bottom-right (position set in CSS with safe-area)
   map.zoomControl.setPosition('bottomright');
 
@@ -512,16 +512,16 @@ function addMarker(map, latlng, name, list = "default") {
 
   // Debug: Log the coordinates being used
   console.log('Creating marker at coordinates:', latlng);
-  
+
   // Ensure map size is valid before adding marker
   map.invalidateSize();
-  
-  const marker = L.marker(latlng, { 
+
+  const marker = L.marker(latlng, {
     listId: list,
     icon: customIcon,
     riseOnHover: true
   }).addTo(map);
-  
+
   // Immediately update marker position to ensure correct rendering
   // This fixes the issue where markers don't appear in the right spot initially
   const updateMarkerPosition = () => {
@@ -530,33 +530,33 @@ function addMarker(map, latlng, name, list = "default") {
       L.DomUtil.setPosition(marker._icon, point);
     }
   };
-  
+
   // Update position immediately
   updateMarkerPosition();
-  
+
   // Also update after the next frame to catch any timing issues
   requestAnimationFrame(() => {
     updateMarkerPosition();
     // Invalidate size to trigger a redraw
     map.invalidateSize();
   });
-  
+
   // Ensure position is correct after any map movement completes
   const positionHandler = () => {
     updateMarkerPosition();
     map.off('moveend', positionHandler);
   };
   map.once('moveend', positionHandler);
-  
+
   // Check if marker is within map bounds and adjust view if needed
   const mapBounds = map.getBounds();
   const markerLatLng = marker.getLatLng();
-  
+
   if (!mapBounds.contains(markerLatLng)) {
     // Smoothly pan to include the marker
     map.panTo(markerLatLng, { animate: true, duration: 0.5 });
   }
-  
+
   // Debug logging for marker creation
   console.log('Marker created successfully:', {
     id: marker._leaflet_id,
@@ -566,15 +566,15 @@ function addMarker(map, latlng, name, list = "default") {
     element: marker.getElement(),
     mapInstance: map
   });
-  
+
   state.markerNames.set(marker._leaflet_id, name);
   marker.bindPopup(createMarkerPopup(marker._leaflet_id, name, list));
-  
+
   state.markers.set(marker._leaflet_id, marker);
-  
+
   if (!state.lists.has(list)) state.lists.set(list, new Set());
   state.lists.get(list).add(marker._leaflet_id);
-  
+
   rebuildListUI();
   triggerAutoSave();
 
@@ -599,7 +599,7 @@ function createMarkerPopup(id, name, list) {
   const markerLatLng = marker ? marker.getLatLng() : null;
   const lat = markerLatLng ? markerLatLng.lat.toFixed(6) : '';
   const lng = markerLatLng ? markerLatLng.lng.toFixed(6) : '';
-  
+
   return `
     <div class="marker-popup-container">
       <div class="marker-popup-header">
@@ -655,11 +655,11 @@ function closePopup() {
 function addMarkerToRoute(id) {
   const marker = state.markers.get(id);
   if (!marker) return;
-  
+
   // Center map on marker and close popup
   window.mapInstance.setView(marker.getLatLng(), window.mapInstance.getZoom());
   window.mapInstance.closePopup();
-  
+
   // Show confirmation
   const markerName = state.markerNames.get(id);
   alert(`Added "${markerName}" to route planning. Click "Draw Route" to create route with all visible markers.`);
@@ -668,16 +668,16 @@ function addMarkerToRoute(id) {
 function deleteMarker(id) {
   const marker = state.markers.get(id);
   if (!marker) return;
-  
+
   const list = marker.options.listId;
-  
+
   marker.removeFrom(window.mapInstance);
   state.markers.delete(id);
   state.markerNames.delete(id);
-  
+
   state.lists.get(list)?.delete(id);
   if (state.lists.get(list)?.size === 0) state.lists.delete(list);
-  
+
   rebuildListUI();
   triggerAutoSave();
 }
@@ -685,10 +685,10 @@ function deleteMarker(id) {
 async function changeMarkerList(id) {
   const marker = state.markers.get(id);
   if (!marker) return;
-  
+
   const oldList = marker.options.listId;
   const newList = await customPrompt('Change Category', 'Enter category name', oldList);
-  
+
   if (!newList || newList === oldList) return;
 
   state.lists.get(oldList)?.delete(id);
@@ -696,7 +696,7 @@ async function changeMarkerList(id) {
 
   if (!state.lists.has(newList)) state.lists.set(newList, new Set());
   state.lists.get(newList).add(id);
-  
+
   marker.options.listId = newList;
   marker.bindPopup(createMarkerPopup(id, state.markerNames.get(id), newList));
 
@@ -709,16 +709,16 @@ async function changeMarkerList(id) {
 function updateUIState() {
   // Update category list visibility - only show when there are markers
   updateCategoriesUI();
-  
+
   // Update route information panel - only show when there's an active route
   updateRouteInfoPanel();
-  
+
   // Update transport mode controls
   updateTransportControls();
-  
+
   // Update bottom controls based on available actions
   updateBottomControls();
-  
+
   // IMPORTANT: Preserve theme styling when updating UI elements
   // Only update the content and visibility, not the theme colors
   // The theme colors should be managed by CSS custom properties and data-theme attribute
@@ -726,43 +726,43 @@ function updateUIState() {
 
 function updateCategoriesUI() {
   const box = document.getElementById("listToggles");
-  
+
   if (state.lists.size === 0) {
     box.innerHTML = `
-      <div class="empty-state">No markers yet. Click on the map to add locations!</div>
+      <div class="empty-state">No markers yet. Use the categories panel to manage saved locations.</div>
     `;
     return;
   }
 
   // Only update the categories list content, don't force it to be visible
   // The visibility should be controlled by user interaction, not automatically
-  box.innerHTML = "";  
-  
+  box.innerHTML = "";
+
   state.lists.forEach((set, name) => {
     const item = document.createElement("div");
     item.className = "list-item";
-    
+
     const cb = document.createElement("input");
     cb.type = "checkbox";
     cb.checked = true;
     cb.id = `list-${name}`;
-    
+
     cb.onchange = () => set.forEach(id => {
       const marker = state.markers.get(id);
       if (marker) {
         cb.checked ? marker.addTo(window.mapInstance) : marker.removeFrom(window.mapInstance);
       }
     });
-    
+
     const label = document.createElement("label");
     label.htmlFor = `list-${name}`;
     label.textContent = name;
-    
+
     item.appendChild(cb);
     item.appendChild(label);
     box.appendChild(item);
   });
-  
+
   // IMPORTANT: Preserve theme styling when updating categories
   // Only update content, not theme colors - theme should be managed by CSS
 }
@@ -770,19 +770,19 @@ function updateCategoriesUI() {
 function updateRouteInfoPanel() {
   const routeInfo = document.getElementById("routeInfo");
   const routePanel = document.querySelector(".route-info-panel");
-  
+
   if (!state.currentRoute) {
     routeInfo.innerHTML = `<p style="color: var(--text-muted); font-size: 14px; margin: 0;">No route created yet</p>`;
     // Don't force the panel to be visible when there's no route
     // The panel visibility should be controlled by user interaction
     return;
   }
-  
+
   if (routePanel) routePanel.style.display = "block";
-  
+
   const routeData = state.currentRoute.routeData;
   const mode = state.currentRoute.mode;
-  
+
   routeInfo.innerHTML = `
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px;">
       <div style="background: var(--panel-bg); padding: 8px; border-radius: 6px; border: 1px solid var(--panel-border);">
@@ -799,7 +799,7 @@ function updateRouteInfoPanel() {
       <span style="font-size: 14px; font-weight: 600; color: var(--text-primary);">${getModeDisplayName(state.currentTransportMode)}</span>
     </div>
   `;
-  
+
   // IMPORTANT: Preserve theme styling when updating route info
   // Only update content, not theme colors - theme should be managed by CSS
 }
@@ -814,7 +814,7 @@ function updateTransportControls() {
       btn.classList.remove('active');
     }
   });
-  
+
   // IMPORTANT: Preserve theme styling when updating transport controls
   // Only update button states, not theme colors - theme should be managed by CSS
 }
@@ -823,22 +823,22 @@ function updateBottomControls() {
   const drawBtn = document.getElementById("drawRouteBtn");
   const clearBtn = document.getElementById("clearRouteBtn");
   const locationBtn = document.getElementById("toggleLocationBtn");
-  
+
   // Enable/disable buttons based on state
   const visibleMarkers = [...state.markers.values()].filter(m => window.mapInstance.hasLayer(m));
   const hasUserLocation = state.userMarker && state.showUser && window.mapInstance.hasLayer(state.userMarker);
   const totalPoints = visibleMarkers.length + (hasUserLocation ? 1 : 0);
-  
+
   // Draw route button
   drawBtn.disabled = totalPoints < 2;
   drawBtn.style.opacity = totalPoints >= 2 ? "1" : "0.5";
   drawBtn.style.cursor = totalPoints >= 2 ? "pointer" : "not-allowed";
-  
+
   // Clear route button
   clearBtn.disabled = !state.currentRoute;
   clearBtn.style.opacity = state.currentRoute ? "1" : "0.5";
   clearBtn.style.cursor = state.currentRoute ? "pointer" : "not-allowed";
-  
+
   // Location button
   locationBtn.style.opacity = state.userMarker ? "1" : "0.5";
   locationBtn.style.cursor = state.userMarker ? "pointer" : "not-allowed";
@@ -876,7 +876,7 @@ function setupLocationTracking(map) {
   navigator.geolocation.watchPosition(
     ({ coords }) => {
       const pos = [coords.latitude, coords.longitude];
-      
+
       if (!state.userMarker) {
         const userIcon = createMarkerIcon('#0a84ff', 'simple-marker user-location-marker');
         state.userMarker = L.marker(pos, { icon: userIcon }).bindPopup("You are here");
@@ -887,7 +887,7 @@ function setupLocationTracking(map) {
           state.userMarker.addTo(map);
         }
       }
-      
+
       checkProximityAlerts(map, pos);
     },
     (error) => console.error('Location error:', error),
@@ -911,14 +911,14 @@ function orderWaypointsByProximity(map, start, waypoints) {
   const ordered = [];
   const remaining = [...waypoints];
   let current = start;
-  
+
   while (remaining.length) {
     remaining.sort((a, b) => map.distance(current, a) - map.distance(current, b));
     const next = remaining.shift();
     ordered.push(next);
     current = next;
   }
-  
+
   return ordered;
 }
 
@@ -936,13 +936,13 @@ async function createEnhancedRoute(map, start, waypoints, mode = "driving") {
 
     // Create route using the enhanced service
     const routeData = await state.routingService.createRoute(map, startCoord, waypointCoords, mode);
-    
+
     // Check if route creation failed (returns null on error)
     if (!routeData) {
       console.error('Route creation failed - no route data returned');
       return null;
     }
-    
+
     // Store current route data for potential mode switching
     state.currentRoute = {
       start: startCoord,
@@ -953,15 +953,15 @@ async function createEnhancedRoute(map, start, waypoints, mode = "driving") {
 
     // Update the transport mode UI
     updateTransportControls();
-    
+
     // Enable clear route button
     document.getElementById("clearRouteBtn").disabled = false;
-    
+
     // Always update directions when route is created, and show them
     const directionsSection = document.querySelector('.directions-section');
     const list = directionsSection?.querySelector('.directions-list-inline');
     const headerText = directionsSection?.querySelector('.directions-header-inline h4');
-    
+
     if (list && headerText) {
       // Update directions content
       list.innerHTML = generateDirectionsList(routeData.steps, mode);
@@ -969,7 +969,7 @@ async function createEnhancedRoute(map, start, waypoints, mode = "driving") {
       list.style.display = 'flex';
       headerText.textContent = 'Hide Turn-by-Turn Directions';
     }
-    
+
     return routeData;
 
   } catch (error) {
@@ -984,12 +984,12 @@ function showDirections() {
   if (state.currentRoute && state.currentRoute.routeData) {
     // Display directions in the transport control panel
     displayDirectionsInPanel(state.currentRoute.routeData, state.currentRoute.mode);
-    
+
     // Also show the directions section if it's hidden
     const directionsSection = document.querySelector('.directions-section');
     const list = directionsSection?.querySelector('.directions-list-inline');
     const headerText = directionsSection?.querySelector('.directions-header-inline h4');
-    
+
     if (list && headerText) {
       list.style.display = 'flex';
       headerText.textContent = 'Hide Turn-by-Turn Directions';
@@ -1031,24 +1031,24 @@ function generateDirectionsList(steps, mode) {
 
   // Get all visible markers for proximity checking
   const visibleMarkers = [...state.markers.values()].filter(m => window.mapInstance.hasLayer(m));
-  
+
   return steps.map((step, index) => {
     // Check if this step is near any markers
     let markerProximityInfo = '';
-    
+
     if (step.waypoint && visibleMarkers.length > 0) {
       // If this step has a waypoint coordinate, check for nearby markers
       const stepLatLng = L.latLng(step.waypoint.lat, step.waypoint.lng);
-      
+
       visibleMarkers.forEach(marker => {
         const markerLatLng = marker.getLatLng();
         const distance = window.mapInstance.distance(stepLatLng, markerLatLng);
-        
+
         // If marker is within 100 meters of this step
         if (distance <= 100) {
           const markerName = state.markerNames.get(marker._leaflet_id);
           const markerList = marker.options.listId;
-          
+
           if (markerProximityInfo) {
             markerProximityInfo += `<br><span class="marker-proximity">Near: ${markerName} (${markerList})</span>`;
           } else {
@@ -1077,10 +1077,10 @@ function generateDirectionsList(steps, mode) {
 function updateEnhancedTransportModeUI(map, currentMode) {
   // Update the current transport mode in state
   state.currentTransportMode = currentMode;
-  
+
   // Create enhanced transport mode controls
   let transportControls = document.querySelector('.enhanced-transport-controls');
-  
+
   if (!transportControls) {
     transportControls = document.createElement('div');
     transportControls.className = 'enhanced-transport-controls';
@@ -1098,11 +1098,11 @@ function updateEnhancedTransportModeUI(map, currentMode) {
         </button>
       </div>
     `;
-    
+
     // Add to the control panel
     const controlPanel = document.querySelector('.control-panel');
     controlPanel.appendChild(transportControls);
-    
+
     // Add event listeners
     transportControls.querySelectorAll('.transport-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -1114,10 +1114,10 @@ function updateEnhancedTransportModeUI(map, currentMode) {
               b.classList.remove('active');
             });
             btn.classList.add('active');
-            
+
             // Recreate route with new mode
             await createEnhancedRoute(
-              map, 
+              map,
               L.latLng(state.currentRoute.start.lat, state.currentRoute.start.lng),
               state.currentRoute.waypoints.map(wp => L.latLng(wp.lat, wp.lng)),
               newMode
@@ -1147,13 +1147,13 @@ function clearEnhancedRoute(map) {
   if (state.routingService) {
     state.routingService.clearRoute(map);
   }
-  
+
   // Remove transport controls
   const transportControls = document.querySelector('.enhanced-transport-controls');
   if (transportControls) {
     transportControls.remove();
   }
-  
+
   // Reset state
   state.currentRoute = null;
   state.currentTransportMode = 'driving';
@@ -1163,14 +1163,30 @@ function clearEnhancedRoute(map) {
 // ===== EVENT HANDLERS =====
 
 function setupEventHandlers(map) {
-  // Map click to add marker
+  // Map click to show POI popup (no marker drop)
   map.on("click", async (e) => {
-    const name = await customPrompt('Add Location', 'Enter location name');
-    if (!name) return;
-    
-    const list = await customPrompt('Choose Category', 'Enter category name', 'default');
-    addMarker(map, e.latlng, name, list || 'default');
-    updateUIState();
+    const { lat, lng } = e.latlng;
+    const cfg = window.config || {};
+    const token = cfg.mapbox?.accessToken;
+
+    // Open a loading popup immediately at the click point
+    const popup = L.popup({
+      maxWidth: 420,
+      minWidth: 280,
+      className: 'poi-popup',
+      autoPanPadding: [40, 40]
+    })
+      .setLatLng(e.latlng)
+      .setContent('<div class="poi-loading"><div class="poi-spinner"></div><span>Loading POI data…</span></div>')
+      .openOn(map);
+
+    try {
+      const result = await window.poiService.fetchPOINearby(lat, lng, token);
+      popup.setContent(result.html);
+    } catch (err) {
+      console.error('[app] POI fetch error:', err);
+      popup.setContent(window.poiService.buildFallbackPopupHTML(lat, lng, 'Failed to load data'));
+    }
   });
 
 
@@ -1179,15 +1195,15 @@ function setupEventHandlers(map) {
   document.querySelectorAll('.transport-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const newMode = btn.dataset.mode;
-      
+
       // Don't do anything if clicking the already active mode
       if (newMode === state.currentTransportMode) {
         return;
       }
-      
+
       // Update state first
       state.currentTransportMode = newMode;
-      
+
       // Update all buttons to reflect the new active state
       document.querySelectorAll('.transport-btn').forEach(b => {
         b.classList.remove('active');
@@ -1195,12 +1211,12 @@ function setupEventHandlers(map) {
           b.classList.add('active');
         }
       });
-      
+
       if (state.currentRoute) {
         try {
           // Recreate route with new mode
           await createEnhancedRoute(
-            map, 
+            map,
             L.latLng(state.currentRoute.start.lat, state.currentRoute.start.lng),
             state.currentRoute.waypoints.map(wp => L.latLng(wp.lat, wp.lng)),
             newMode
@@ -1230,7 +1246,7 @@ function setupEventHandlers(map) {
       alert("Location not available yet.");
       return;
     }
-    
+
     state.showUser = !state.showUser;
     state.showUser ? state.userMarker.addTo(map) : state.userMarker.removeFrom(map);
     updateUIState();
@@ -1241,14 +1257,14 @@ function setupEventHandlers(map) {
     const visible = [...state.markers.values()].filter(m => map.hasLayer(m));
     const hasUserLocation = state.userMarker && state.showUser && map.hasLayer(state.userMarker);
     const totalPoints = visible.length + (hasUserLocation ? 1 : 0);
-    
+
     if (totalPoints < 2) {
       alert("You need at least two points (markers or your location) to draw a route.");
       return;
     }
 
     let start, waypoints;
-    
+
     if (hasUserLocation) {
       start = state.userMarker.getLatLng();
       waypoints = visible.map(m => m.getLatLng());
@@ -1290,8 +1306,8 @@ async function saveMapDataToSupabase() {
   const saves = [];
   state.markers.forEach((marker, id) => {
     const latlng = marker.getLatLng();
-    const name   = state.markerNames.get(id) || 'Unnamed';
-    const list   = marker.options.listId || 'default';
+    const name = state.markerNames.get(id) || 'Unnamed';
+    const list = marker.options.listId || 'default';
     saves.push(svc.saveMarker({ name, lat: latlng.lat, lng: latlng.lng, categoryName: list }));
   });
 
@@ -1352,17 +1368,17 @@ document.addEventListener('DOMContentLoaded', () => {
   createModal();
   const map = initializeMap();
   window.mapInstance = map; // Store globally for popup callbacks
-  
+
   addMapLayers(map);
   setupLocationTracking(map);
   setupEventHandlers(map);
-  
+
   // Apply dark theme on initialization
   applyDarkTheme();
-  
+
   // Initialize transport mode controls to ensure correct active state
   updateTransportControls();
-  
+
   // Add directions toggle functionality for the new inline directions section
   const directionsHeader = document.querySelector('.directions-header-inline');
   if (directionsHeader) {
@@ -1370,11 +1386,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const directionsSection = directionsHeader.parentElement;
       const list = directionsSection.querySelector('.directions-list-inline');
       const headerText = directionsHeader.querySelector('h4');
-      
+
       if (list.style.display === 'none' || !list.style.display) {
         list.style.display = 'flex';
         headerText.textContent = 'Hide Turn-by-Turn Directions';
-        
+
         // If we have a route, show directions
         if (state.currentRoute) {
           displayDirectionsInPanel(state.currentRoute.routeData, state.currentRoute.mode);
@@ -1392,7 +1408,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-  
+
   // Make functions available globally for popup buttons
   window.deleteMarker = deleteMarker;
   window.changeMarkerList = changeMarkerList;
@@ -1418,7 +1434,7 @@ function setupMapTypesDropdown(map) {
   const dropdown = document.getElementById('mapTypesDropdown');
   const currentTypeSpan = document.querySelector('.current-map-type');
   const options = document.querySelectorAll('.map-type-option');
-  
+
   // Mapbox styles configuration
   const config = window.config || config;
   const mapboxStyles = {
@@ -1487,13 +1503,13 @@ function setupMapTypesDropdown(map) {
   };
 
   // Determine which styles to use
-  const baseLayers = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE' 
-    ? mapboxStyles 
+  const baseLayers = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE'
+    ? mapboxStyles
     : fallbackStyles;
 
   // Set default layer
-  const defaultLayer = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE' 
-    ? baseLayers["Default"] 
+  const defaultLayer = config.mapbox.accessToken && config.mapbox.accessToken !== 'YOUR_MAPBOX_ACCESS_TOKEN_HERE'
+    ? baseLayers["Default"]
     : baseLayers["Street Map"];
 
   // Store current layer reference
@@ -1504,7 +1520,7 @@ function setupMapTypesDropdown(map) {
   toggleBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     const isOpen = dropdown.classList.contains('open');
-    
+
     if (isOpen) {
       closeDropdown();
     } else {
@@ -1523,7 +1539,7 @@ function setupMapTypesDropdown(map) {
   options.forEach(option => {
     option.addEventListener('click', () => {
       const styleName = option.dataset.style;
-      
+
       // Update UI
       options.forEach(opt => {
         opt.classList.remove('active');
@@ -1531,10 +1547,10 @@ function setupMapTypesDropdown(map) {
       });
       option.classList.add('active');
       option.setAttribute('aria-selected', 'true');
-      
+
       // Update current type display
       currentTypeSpan.textContent = styleName;
-      
+
       // Change map layer
       if (baseLayers[styleName]) {
         if (currentLayer) {
@@ -1543,7 +1559,7 @@ function setupMapTypesDropdown(map) {
         currentLayer = baseLayers[styleName];
         currentLayer.addTo(map);
       }
-      
+
       closeDropdown();
     });
   });
@@ -1567,7 +1583,7 @@ function setupMapTypesDropdown(map) {
   dropdown.addEventListener('keydown', (e) => {
     const optionsArray = Array.from(options);
     const focusedIndex = optionsArray.findIndex(opt => opt === document.activeElement);
-    
+
     if (e.key === 'Escape') {
       closeDropdown();
       toggleBtn.focus();
