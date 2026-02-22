@@ -635,8 +635,11 @@ function savePOIAsMarker(lat, lng, name, category, featureDataStr) {
   // Close the current popup before adding the marker
   map.closePopup();
 
+  // Trim and default the category
+  const safeCategory = (category || '').trim() || 'default';
+
   // Add the marker with POI data attached
-  addMarker(map, [lat, lng], name, category || 'default', poiFeature);
+  addMarker(map, [lat, lng], name, safeCategory, poiFeature);
   updateUIState();
 }
 

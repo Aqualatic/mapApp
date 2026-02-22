@@ -2456,23 +2456,55 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.poi-save-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.poi-category-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.poi-category-input::placeholder {
+  color: #6e6e73;
+}
+
+.poi-category-input:focus {
+  border-color: rgba(10, 132, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .poi-save-btn {
-  width: 100%;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  padding: 10px 16px;
+  padding: 8px 16px;
   background: rgba(10, 132, 255, 0.15);
   border: 1px solid rgba(10, 132, 255, 0.3);
   border-radius: 999px;
   color: #409cff;
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: var(--touch-min);
+  min-height: 38px;
+  white-space: nowrap;
 }
 
 .poi-save-btn:hover {
