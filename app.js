@@ -506,7 +506,7 @@ function createMarkerIcon(color, className = 'simple-marker') {
   });
 }
 
-function addMarker(map, latlng, name, list = "default") {
+function addMarker(map, latlng, name, list = "default", poiFeature = null) {
   const markerColor = state.currentTheme === 'dark' ? '#ff453a' : '#ff4444';
   const customIcon = createMarkerIcon(markerColor, 'simple-marker');
 
@@ -568,7 +568,25 @@ function addMarker(map, latlng, name, list = "default") {
   });
 
   state.markerNames.set(marker._leaflet_id, name);
-  marker.bindPopup(createMarkerPopup(marker._leaflet_id, name, list));
+
+  // Store POI feature data on the marker if available
+  if (poiFeature) {
+    marker._poiFeature = poiFeature;
+    // Bind a POI popup that reopens the same info panel
+    const lat = Array.isArray(latlng) ? latlng[0] : latlng.lat;
+    const lng = Array.isArray(latlng) ? latlng[1] : latlng.lng;
+    const popupHTML = poiFeature.properties?.feature_type === 'poi'
+      ? window.poiService.buildPOIPopupHTML(poiFeature, lat, lng)
+      : window.poiService.buildAddressPopupHTML(poiFeature, lat, lng);
+    marker.bindPopup(popupHTML, {
+      maxWidth: 420,
+      minWidth: 280,
+      className: 'poi-popup',
+      autoPanPadding: [40, 40]
+    });
+  } else {
+    marker.bindPopup(createMarkerPopup(marker._leaflet_id, name, list));
+  }
 
   state.markers.set(marker._leaflet_id, marker);
 
@@ -592,6 +610,34 @@ function addMarker(map, latlng, name, list = "default") {
       }
     }, 100);
   });
+}
+
+/**
+ * Save a POI from the popup as a persistent marker on the map.
+ * Called from the 'Save Location' button inside POI popups.
+ */
+function savePOIAsMarker(lat, lng, name, category, featureDataStr) {
+  const map = window.mapInstance;
+  if (!map) return;
+
+  // Parse the feature data if it was passed as a string
+  let poiFeature = null;
+  try {
+    if (featureDataStr && typeof featureDataStr === 'string') {
+      poiFeature = JSON.parse(featureDataStr);
+    } else if (featureDataStr && typeof featureDataStr === 'object') {
+      poiFeature = featureDataStr;
+    }
+  } catch (e) {
+    console.warn('[app] Could not parse POI feature data:', e);
+  }
+
+  // Close the current popup before adding the marker
+  map.closePopup();
+
+  // Add the marker with POI data attached
+  addMarker(map, [lat, lng], name, category || 'default', poiFeature);
+  updateUIState();
 }
 
 function createMarkerPopup(id, name, list) {
@@ -1414,6 +1460,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.changeMarkerList = changeMarkerList;
   window.closePopup = closePopup;
   window.addMarkerToRoute = addMarkerToRoute;
+  window.savePOIAsMarker = savePOIAsMarker;
 
   // Expose save/load functions for the auth-ui buttons
   window.saveMapDataToSupabase = saveMapDataToSupabase;

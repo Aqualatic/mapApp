@@ -137,7 +137,8 @@ async function fetchPOINearby(lat, lng, accessToken) {
         if (reverseData.features && reverseData.features.length > 0) {
             const feature = reverseData.features[0];
             if (feature.properties.feature_type === 'poi') {
-                return { feature, html: buildPOIPopupHTML(feature, lat, lng) };
+                const html = buildPOIPopupHTML(feature, lat, lng);
+                return { feature, html, popupType: 'poi' };
             }
         }
 
@@ -166,7 +167,8 @@ async function fetchPOINearby(lat, lng, accessToken) {
 
         // Only use the category result if it's within ~500m of the click
         if (bestFeature && bestDistance < 500) {
-            return { feature: bestFeature, html: buildPOIPopupHTML(bestFeature, lat, lng) };
+            const html = buildPOIPopupHTML(bestFeature, lat, lng);
+            return { feature: bestFeature, html, popupType: 'poi' };
         }
 
         // Step 3: Reverse lookup without POI filter for address info
@@ -175,7 +177,8 @@ async function fetchPOINearby(lat, lng, accessToken) {
         if (addressRes.ok) {
             const addressData = await addressRes.json();
             if (addressData.features && addressData.features.length > 0) {
-                return { feature: addressData.features[0], html: buildAddressPopupHTML(addressData.features[0], lat, lng) };
+                const html = buildAddressPopupHTML(addressData.features[0], lat, lng);
+                return { feature: addressData.features[0], html, popupType: 'address' };
             }
         }
 
@@ -289,6 +292,9 @@ function buildPOIPopupHTML(feature, clickedLat, clickedLng) {
         photosHTML = `<div class="poi-photos">${photoItems}</div>`;
     }
 
+    // Encode feature data for the save button
+    const featureJSON = encodeURIComponent(JSON.stringify(feature));
+
     return `
     <div class="poi-popup-container">
       <div class="poi-header">
@@ -304,6 +310,11 @@ function buildPOIPopupHTML(feature, clickedLat, clickedLng) {
       ${tagsHTML}
       ${detailsHTML ? `<div class="poi-details">${detailsHTML}</div>` : ''}
       ${photosHTML}
+      <div class="poi-save-section">
+        <button class="poi-save-btn" onclick="window.savePOIAsMarker(${clickedLat}, ${clickedLng}, '${escapeHtmlPOI(name).replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${escapeHtmlPOI(classification.group)}', decodeURIComponent('${featureJSON}'))">
+          <span class="poi-save-icon">📌</span> Save Location
+        </button>
+      </div>
     </div>
   `;
 }
@@ -315,6 +326,8 @@ function buildAddressPopupHTML(feature, clickedLat, clickedLng) {
     const p = feature.properties || {};
     const name = p.name || p.address || 'Address';
     const fullAddress = p.full_address || p.place_formatted || '';
+
+    const featureJSON = encodeURIComponent(JSON.stringify(feature));
 
     return `
     <div class="poi-popup-container">
@@ -329,6 +342,11 @@ function buildAddressPopupHTML(feature, clickedLat, clickedLng) {
       <div class="poi-details">
         <div class="poi-detail-row"><span class="poi-detail-icon">📍</span><span class="poi-detail-text">${escapeHtmlPOI(fullAddress)}</span></div>
       </div>` : ''}
+      <div class="poi-save-section">
+        <button class="poi-save-btn" onclick="window.savePOIAsMarker(${clickedLat}, ${clickedLng}, '${escapeHtmlPOI(name).replace(/'/g, "\\'").replace(/"/g, '&quot;')}', 'Address', decodeURIComponent('${featureJSON}'))">
+          <span class="poi-save-icon">📌</span> Save Location
+        </button>
+      </div>
     </div>
   `;
 }
@@ -345,6 +363,11 @@ function buildFallbackPopupHTML(lat, lng, message) {
         <span>${lat.toFixed(6)}, ${lng.toFixed(6)}</span>
       </div>
       ${message ? `<div class="poi-fallback-message">${escapeHtmlPOI(message)}</div>` : ''}
+      <div class="poi-save-section">
+        <button class="poi-save-btn" onclick="window.savePOIAsMarker(${lat}, ${lng}, 'Pinned Location', 'default', null)">
+          <span class="poi-save-icon">📌</span> Save Location
+        </button>
+      </div>
     </div>
   `;
 }
@@ -363,5 +386,6 @@ window.poiService = {
     fetchPOINearby,
     buildFallbackPopupHTML,
     buildPOIPopupHTML,
+    buildAddressPopupHTML,
     classifyPOI
 };

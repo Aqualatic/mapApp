@@ -5,11 +5,12 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body { 
-  height: 100%; 
+html,
+body {
+  height: 100%;
   margin: 0;
   overflow-x: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; 
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   background: var(--bg-color);
   color: var(--text-primary);
 }
@@ -67,7 +68,7 @@ html, body {
   --blur: 20px;
 }
 
-#map { 
+#map {
   height: 100%;
   min-height: 100vh;
   min-height: 100dvh;
@@ -105,6 +106,7 @@ html, body {
     transform: translateX(-50px);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -168,7 +170,8 @@ html, body {
 .route-info-panel {
   padding: 16px;
   border-bottom: 1px solid var(--direction-border);
-  display: none; /* Hidden by default, shown when route exists */
+  display: none;
+  /* Hidden by default, shown when route exists */
 }
 
 .route-info-panel h3 {
@@ -207,7 +210,8 @@ html, body {
   bottom: 20px;
   left: 20px;
   z-index: 1000;
-  display: none; /* Hide the container box */
+  display: none;
+  /* Hide the container box */
 }
 
 /* Map Controls - Bottom Right */
@@ -216,7 +220,8 @@ html, body {
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-  display: none; /* Hide the container box */
+  display: none;
+  /* Hide the container box */
 }
 
 /* Override Leaflet default positions – zoom bottom-right, layers above zoom */
@@ -395,12 +400,12 @@ html, body {
     left: calc(10px + var(--safe-left));
     width: min(350px, calc(100vw - 20px - var(--safe-left) - var(--safe-right)));
   }
-  
+
   .right-panel {
     right: calc(10px + var(--safe-right));
     width: min(300px, calc(100vw - 20px - var(--safe-left) - var(--safe-right)));
   }
-  
+
   .bottom-buttons-container {
     bottom: calc(16px + var(--safe-bottom));
     gap: var(--space-xs);
@@ -415,7 +420,7 @@ html, body {
     max-width: none;
     max-height: min(45vh, 50dvh);
   }
-  
+
   .right-panel {
     right: calc(10px + var(--safe-right));
     top: calc(10px + var(--safe-top));
@@ -423,7 +428,7 @@ html, body {
     max-width: none;
     max-height: min(50vh, 55dvh);
   }
-  
+
   .bottom-buttons-container {
     flex-direction: row;
     flex-wrap: wrap;
@@ -431,7 +436,7 @@ html, body {
     padding-left: calc(10px + var(--safe-left));
     padding-right: calc(10px + var(--safe-right));
   }
-  
+
   .gm-button {
     min-width: 0;
     flex: 1 1 auto;
@@ -452,7 +457,7 @@ html, body {
     max-height: min(38vh, 42dvh);
     padding-top: var(--safe-top);
   }
-  
+
   .right-panel {
     top: min(38vh, 42dvh);
     right: 0;
@@ -463,7 +468,7 @@ html, body {
     border-right: none;
     max-height: min(50vh, 55dvh);
   }
-  
+
   .bottom-buttons-container {
     bottom: calc(12px + var(--safe-bottom));
     left: calc(12px + var(--safe-left));
@@ -471,17 +476,18 @@ html, body {
     transform: none;
     max-width: none;
   }
-  
+
   .gm-button {
     flex: 1 1 0;
     min-width: 0;
   }
-  
+
   /* Keep transport buttons uniform on small screens; allow label wrap if needed */
   .transport-btn {
     height: 48px;
     min-height: 48px;
   }
+
   .btn-label {
     white-space: normal;
     line-height: 1.15;
@@ -490,8 +496,13 @@ html, body {
 
 /* Large screens – keep panels from getting too wide */
 @media (min-width: 1400px) {
-  .left-panel { width: 380px; }
-  .right-panel { width: 340px; }
+  .left-panel {
+    width: 380px;
+  }
+
+  .right-panel {
+    width: 340px;
+  }
 }
 
 /* ===== CATEGORY LIST ITEMS ===== */
@@ -929,6 +940,7 @@ html, body {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -991,7 +1003,7 @@ html, body {
   height: 12px;
   border-radius: 50%;
   display: inline-block;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .mode-text {
@@ -1051,6 +1063,7 @@ html, body {
     transform: translateX(-50%) translateY(-20px);
     opacity: 0;
   }
+
   to {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
@@ -1096,7 +1109,8 @@ html, body {
 
 /* ===== ROUTE MARKERS ===== */
 
-.route-marker-start, .route-marker-end {
+.route-marker-start,
+.route-marker-end {
   z-index: 1000 !important;
 }
 
@@ -1458,13 +1472,13 @@ html, body {
     grid-template-columns: 1fr 1fr 1fr;
     gap: var(--space-xs);
   }
-  
+
   .transport-btn {
     height: 44px;
     min-height: 44px;
     padding: var(--space-xs) var(--space-sm);
   }
-  
+
   .btn-label {
     font-size: var(--font-size-sm);
   }
@@ -1475,11 +1489,11 @@ html, body {
     width: calc(100vw - 20px);
     top: 10px;
   }
-  
+
   .route-stats {
     grid-template-columns: 1fr;
   }
-  
+
   .route-mode {
     flex-direction: column;
     align-items: flex-start;
@@ -1495,7 +1509,7 @@ html, body {
   .list-panel {
     max-height: 25vh;
   }
-  
+
   .control-panel {
     bottom: 50px;
   }
@@ -1547,11 +1561,11 @@ html, body {
     top: auto;
     bottom: 50px;
   }
-  
+
   .leaflet-routing-container-custom.collapsed {
     transform: translateY(calc(100% + 60px));
   }
-  
+
   .route-panel-toggle {
     left: 50%;
     transform: translateX(-50%);
@@ -1561,11 +1575,11 @@ html, body {
     border-radius: 8px 8px 0 0;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
   }
-  
+
   .leaflet-routing-alternatives-container {
     max-height: calc(45vh - 200px);
   }
-  
+
   .transport-mode-toggle .mode-btn {
     padding: 8px 10px;
     font-size: 12px;
@@ -1775,7 +1789,7 @@ html, body {
     width: calc(100vw - 40px);
     max-width: 500px;
   }
-  
+
   .enhanced-route-panel {
     right: 540px;
   }
@@ -1788,28 +1802,28 @@ html, body {
     width: calc(100vw - 20px);
     top: 10px;
   }
-  
+
   .enhanced-route-panel {
     right: 10px;
     left: 10px;
     width: calc(100vw - 20px);
     top: 380px;
   }
-  
+
   .control-panel {
     bottom: 10px;
-      left: 10px;
+    left: 10px;
     right: 10px;
     width: calc(100vw - 20px);
   }
-  
+
   .list-panel {
     top: 10px;
     left: 10px;
     right: 10px;
     width: calc(100vw - 20px);
   }
-  
+
   /* Adjust styles dropdown for mobile */
   .styles-dropdown-menu {
     left: 0;
@@ -2091,6 +2105,7 @@ html, body {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -2143,13 +2158,13 @@ html, body {
 
 /* Override Leaflet popup to match app's frosted-glass dark theme */
 .poi-popup .leaflet-popup-content-wrapper {
-  background: var(--glass-bg);
+  background: rgba(30, 30, 32, 0.96);
   -webkit-backdrop-filter: blur(var(--blur));
   backdrop-filter: blur(var(--blur));
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-lg);
-  box-shadow: var(--panel-shadow);
-  color: var(--text-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
   padding: 0;
   overflow: hidden;
 }
@@ -2164,11 +2179,11 @@ html, body {
 }
 
 .poi-popup .leaflet-popup-tip {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: rgba(30, 30, 32, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: none;
   border-left: none;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .poi-popup .leaflet-popup-close-button {
@@ -2223,7 +2238,7 @@ html, body {
 .poi-name {
   font-size: clamp(16px, 3.5vw, 18px);
   font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
+  color: #ffffff;
   line-height: 1.3;
   flex: 1;
 }
@@ -2252,7 +2267,7 @@ html, body {
 /* Coordinates */
 .poi-coords {
   font-size: var(--font-size-sm);
-  color: var(--text-muted);
+  color: #a0a0a5;
   margin-bottom: var(--space-sm);
   font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
   letter-spacing: 0.02em;
@@ -2275,12 +2290,12 @@ html, body {
 .poi-rating-value {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .poi-review-count {
   font-size: var(--font-size-sm);
-  color: var(--text-muted);
+  color: #a0a0a5;
 }
 
 /* Tags */
@@ -2295,11 +2310,11 @@ html, body {
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
   font-size: 11px;
-  color: var(--text-secondary);
+  color: #d0d0d5;
   white-space: nowrap;
   text-transform: capitalize;
   transition: background 0.15s ease;
@@ -2316,7 +2331,7 @@ html, body {
   gap: var(--space-xs);
   margin-bottom: var(--space-sm);
   padding-top: var(--space-xs);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .poi-detail-row {
@@ -2336,20 +2351,20 @@ html, body {
 
 .poi-detail-text {
   font-size: var(--font-size-sm);
-  color: var(--text-secondary);
+  color: #e0e0e5;
   word-break: break-word;
 }
 
 .poi-detail-link {
   font-size: var(--font-size-sm);
-  color: var(--accent-color);
+  color: #409cff;
   text-decoration: none;
   word-break: break-all;
   transition: color 0.15s ease;
 }
 
 .poi-detail-link:hover {
-  color: var(--accent-hover);
+  color: #6db6ff;
   text-decoration: underline;
 }
 
@@ -2405,7 +2420,9 @@ html, body {
 }
 
 @keyframes poi-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Fallback State */
@@ -2428,8 +2445,51 @@ html, body {
 
 .poi-fallback-message {
   font-size: var(--font-size-sm);
-  color: var(--text-muted);
+  color: #a0a0a5;
   margin-top: var(--space-xs);
+}
+
+/* Save Location Button */
+.poi-save-section {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.poi-save-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: 10px 16px;
+  background: rgba(10, 132, 255, 0.15);
+  border: 1px solid rgba(10, 132, 255, 0.3);
+  border-radius: 999px;
+  color: #409cff;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--touch-min);
+}
+
+.poi-save-btn:hover {
+  background: rgba(10, 132, 255, 0.25);
+  border-color: rgba(10, 132, 255, 0.5);
+  color: #6db6ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(10, 132, 255, 0.2);
+}
+
+.poi-save-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.poi-save-icon {
+  font-size: 16px;
 }
 
 /* Responsive adjustments for POI popup */
